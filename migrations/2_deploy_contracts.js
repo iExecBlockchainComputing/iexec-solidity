@@ -1,4 +1,4 @@
-var ECDSA    = artifacts.require("./ECDSA.sol");
+var ECDSALib = artifacts.require("./ECDSALib.sol");
 var Identity = artifacts.require("./Identity.sol");
 
 module.exports = async function(deployer, network, accounts)
@@ -9,6 +9,6 @@ module.exports = async function(deployer, network, accounts)
 	console.log("Chainid is:", chainid);
 	console.log("Chaintype is:", chaintype);
 
-	await deployer.deploy(ECDSA);
-	await deployer.link(ECDSA, Identity);
+	await deployer.deploy(ECDSALib);
+	await deployer.link(ECDSALib, Identity);
 };

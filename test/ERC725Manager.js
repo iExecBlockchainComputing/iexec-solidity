@@ -7,7 +7,7 @@ function extractEvents(txMined, address, name)
 	return txMined.logs.filter((ev) => { return ev.address == address && ev.event == name });
 }
 
-contract('Identity: ERC725Key', async (accounts) => {
+contract('Identity: ERC725Manager', async (accounts) => {
 
 	// assert.isAtLeast(accounts.length, 10, "should have at least 10 accounts");
 
@@ -27,7 +27,7 @@ contract('Identity: ERC725Key', async (accounts) => {
 	 ***************************************************************************/
 	before("configure", async () => {
 		console.log("# web3 version:", web3.version);
-		IdentityInstance = await Identity.new()
+		IdentityInstance = await Identity.new(accounthashs[0].key)
 	});
 
 	it("base", async () => {

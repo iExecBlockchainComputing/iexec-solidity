@@ -27,7 +27,7 @@ contract('Identity: ERC1077', async (accounts) => {
 	 ***************************************************************************/
 	before("configure", async () => {
 		console.log("# web3 version:", web3.version);
-		IdentityInstance = await Identity.new()
+		IdentityInstance = await Identity.new(accounthashs[0].key)
 	});
 
 	it("Adding action capability", async () => {

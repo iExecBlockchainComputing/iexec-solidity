@@ -5,9 +5,9 @@ import "../libs/ECDSALib.sol";
 
 import "./IERC20.sol";
 import "./IERC1077.sol";
-import "./ERC725Manager.sol";
+import "./ERC725Key.sol";
 
-contract ERC1077 is IERC1077, ERC725Manager
+contract ERC1077 is IERC1077, ERC725Key
 {
 	using SafeMath for uint256;
 	using ECDSALib for bytes32;
@@ -57,15 +57,20 @@ contract ERC1077 is IERC1077, ERC725Manager
 			operationType);
 
 		// Check signature
-		require(m_keys.find(
-			addrToKey(messageHash.toEthSignedMessageHash().recover(signatures)),
-			ACTION_KEY
-		));
+		bytes32 signerKey = addrToKey(messageHash.toEthSignedMessageHash().recover(signatures));
+		if (to == address(this))
+		{
+			require(m_keys.find(signerKey, MANAGEMENT_KEY));
+		}
+		else
+		{
+			require(m_keys.find(signerKey, ACTION_KEY));
+		}
 
 		// Perform call
 		bool success;
-		bytes memory resultdata;
-		(success, resultdata) = to.call.value(value)(data);
+		// bytes memory resultdata;
+		(success, /*resultdata*/) = to.call.value(value)(data);
 
 		// Report
 		emit ExecutedSigned(messageHash, nonce, success);

@@ -2,14 +2,14 @@ pragma solidity ^0.5.0;
 
 import "../libs/KeyStoreLib.sol";
 
-import "./IERC725Manager.sol";
+import "./IERC725Key.sol";
 
 /// @title KeyManager
 /// @author Mircea Pasoi
 /// @notice Implement add/remove functions from ERC725 spec
 /// @dev Key data is stored using KeyStore library. Inheriting ERC725 for the events
 
-contract ERC725Manager is IERC725Manager
+contract ERC725Key is IERC725Key
 {
 	// Key storage
 	using KeyStoreLib for KeyStoreLib.Keys;
@@ -27,7 +27,7 @@ contract ERC725Manager is IERC725Manager
 	/// @dev Modifier that only allows keys of purpose 1, or the identity itself
 	modifier onlyManagement
 	{
-		require(m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY));
+		require(msg.sender == address(this) || m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY));
 		_;
 	}
 

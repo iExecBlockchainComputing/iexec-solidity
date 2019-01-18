@@ -7,7 +7,7 @@ function extractEvents(txMined, address, name)
 	return txMined.logs.filter((ev) => { return ev.address == address && ev.event == name });
 }
 
-contract('Identity: ERC725Manager', async (accounts) => {
+contract('Identity: ERC725Key', async (accounts) => {
 
 	// assert.isAtLeast(accounts.length, 10, "should have at least 10 accounts");
 
@@ -30,14 +30,14 @@ contract('Identity: ERC725Manager', async (accounts) => {
 		IdentityInstance = await Identity.new(accounthashs[0].key)
 	});
 
-	it("base", async () => {
+	it("Base", async () => {
 		for (id in accounthashs)
 		{
 			assert.equal(await IdentityInstance.addrToKey(accounthashs[id].addr), accounthashs[id].key);
 		}
 	});
 
-	it("getters", async () => {
+	it("Accessors", async () => {
 		assert.equal(await IdentityInstance.numKeys(), 1);
 
 		entry = await IdentityInstance.getKey(accounthashs[0].key);
@@ -61,7 +61,7 @@ contract('Identity: ERC725Manager', async (accounts) => {
 		assert.deepEqual(await IdentityInstance.getKeysByPurpose(4), []                     );
 	});
 
-	it("manager #1", async () => {
+	it("Management #1", async () => {
 		txsMined = await Promise.all([
 			IdentityInstance.addKey(accounthashs[0].key, 2, 1, { from: accounthashs[0].addr }),
 			IdentityInstance.addKey(accounthashs[0].key, 3, 1, { from: accounthashs[0].addr }),
@@ -84,7 +84,7 @@ contract('Identity: ERC725Manager', async (accounts) => {
 		assert.equal(events[0].args.keyType, 1                  );
 	});
 
-	it("getters", async () => {
+	it("Accessors", async () => {
 		assert.equal(await IdentityInstance.numKeys(), 4);
 
 		entry = await IdentityInstance.getKey(accounthashs[0].key);
@@ -108,7 +108,7 @@ contract('Identity: ERC725Manager', async (accounts) => {
 		assert.deepEqual(await IdentityInstance.getKeysByPurpose(4), [ accounthashs[0].key ]);
 	});
 
-	it("manager #2", async () => {
+	it("Management #2", async () => {
 		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 1, 1, { from: accounthashs[1].addr }));
 		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 2, 1, { from: accounthashs[1].addr }));
 		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 3, 1, { from: accounthashs[1].addr }));

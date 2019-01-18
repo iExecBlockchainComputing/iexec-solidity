@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-contract IERC725Manager
+contract IERC725Key
 {
 	// 1: MANAGEMENT keys, which can manage the identity
 	uint256 public constant MANAGEMENT_KEY = 1;

@@ -56,12 +56,15 @@ contract ERC1077 is IERC1077, ERC725KeyBase
 			operationType);
 
 		// Check signature
-		address signer = messageHash.toEthSignedMessageHash().recover(signatures);
-		require(m_keys.find(addrToKey(signer), ACTION_KEY));
+		require(m_keys.find(
+			addrToKey(messageHash.toEthSignedMessageHash().recover(signatures)),
+			ACTION_KEY
+		));
 
 		// Perform call
 		bool success;
-		(success,) = to.call.value(value)(data);
+		bytes memory resultdata;
+		(success, resultdata) = to.call.value(value)(data);
 
 		// Report
 		emit ExecutedSigned(messageHash, nonce, success);

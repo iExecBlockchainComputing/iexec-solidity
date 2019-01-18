@@ -1,14 +1,20 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
 
 library ECDSA
 {
-	struct signature
-	{
-		uint8   v;
-		bytes32 r;
-		bytes32 s;
-	}
+	// struct signature
+	// {
+	// 	uint8   v;
+	// 	bytes32 r;
+	// 	bytes32 s;
+	// }
+
+	// function recover(bytes32 hash, signature memory sign)
+	// public pure returns (address)
+	// {
+	// 	require(sign.v == 27 || sign.v == 28);
+	// 	return ecrecover(hash, sign.v, sign.r, sign.s);
+	// }
 
 	function recover(bytes32 hash, bytes memory sign)
 	public pure returns (address)
@@ -25,13 +31,6 @@ library ECDSA
 		}
 		require(v == 27 || v == 28);
 		return ecrecover(hash, v, r, s);
-	}
-
-	function recover(bytes32 hash, signature memory sign)
-	public pure returns (address)
-	{
-		require(sign.v == 27 || sign.v == 28);
-		return ecrecover(hash, sign.v, sign.r, sign.s);
 	}
 
 	function toEthSignedMessageHash(bytes32 hash)

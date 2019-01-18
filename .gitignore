@@ -1,0 +1,10 @@
+**/__pycache__
+node_modules
+makefile
+
+logs/
+build/
+coverage/
+coverage.json
+coverage.log
+

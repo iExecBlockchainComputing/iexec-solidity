@@ -1,0 +1,33 @@
+{
+  "name": "iexec-solidity",
+  "version": "0.0.1",
+  "description": "",
+  "main": "truffle.js",
+  "scripts": {
+    "test": "./node_modules/.bin/truffle test",
+    "pretest": "./node_modules/.bin/testrpc > /dev/null &",
+    "posttest": "kill $(ps aux | grep testrpc |grep node|awk '{print $2}')",
+    "coverage": "./node_modules/.bin/solidity-coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iExecBlockchainComputing/iexec-solidity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iExecBlockchainComputing/iexec-solidity.git/issues"
+  },
+  "files": [
+    "/build"
+  ],
+  "author": "iExec",
+  "license": "ISC",
+  "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "ethereumjs-util": "^5.2.0",
+    "ganache-cli": "^6.2.4",
+    "husky": "^1.1.4",
+    "truffle": "^5.0.0"
+  }
+}

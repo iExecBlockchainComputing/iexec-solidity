@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-contract ECDSA
+library ECDSALib
 {
 	struct signature
 	{
@@ -11,14 +11,14 @@ contract ECDSA
 	}
 
 	function recover(bytes32 hash, signature memory sign)
-	internal pure returns (address)
+	public pure returns (address)
 	{
 		require(sign.v == 27 || sign.v == 28);
 		return ecrecover(hash, sign.v, sign.r, sign.s);
 	}
 
 	function recover(bytes32 hash, bytes memory sign)
-	internal pure returns (address)
+	public pure returns (address)
 	{
 		bytes32 r;
 		bytes32 s;
@@ -35,13 +35,13 @@ contract ECDSA
 	}
 
 	function toEthSignedMessageHash(bytes32 hash)
-	internal pure returns (bytes32)
+	public pure returns (bytes32)
 	{
 		return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
 	}
 
 	function toEthTypedStructHash(bytes32 struct_hash, bytes32 domain_separator)
-	internal pure returns (bytes32)
+	public pure returns (bytes32)
 	{
 		return keccak256(abi.encodePacked("\x19\x01", domain_separator, struct_hash));
 	}

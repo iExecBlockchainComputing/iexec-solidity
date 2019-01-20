@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-contract IERC1077
+contract IERC1077Refund
 {
 	enum OperationType { CALL, DELEGATECALL, CREATE }
 

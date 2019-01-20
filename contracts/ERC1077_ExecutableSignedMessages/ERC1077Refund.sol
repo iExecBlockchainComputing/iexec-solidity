@@ -1,13 +1,13 @@
 pragma solidity ^0.5.0;
 
-import "../libs/SafeMath.sol";
-import "../libs/ECDSALib.sol";
+import "../Libs/SafeMath.sol";
+import "../Libs/ECDSALib.sol";
 
-import "./IERC20.sol";
-import "./IERC1077.sol";
-import "./ERC725Key.sol";
+import "../ERC20_Token/IERC20.sol";
+import "../ERC725_IdentityProxy/ERC725.sol";
+import "./IERC1077Refund.sol";
 
-contract ERC1077 is IERC1077, ERC725Key
+contract ERC1077Refund is IERC1077Refund, ERC725
 {
 	using SafeMath for uint256;
 	using ECDSALib for bytes32;

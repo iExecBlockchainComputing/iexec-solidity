@@ -12,12 +12,12 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 	using SafeMath for uint256;
 	using ECDSALib for bytes32;
 
-	uint256 private m_signatureNonce = 0;
+	mapping(bytes32 => uint256) m_keynonces;
 
-	function lastNonce()
+	function keyNonce(bytes32 _key)
 	external view returns (uint256)
 	{
-		return m_signatureNonce;
+		return m_keynonces[_key];
 	}
 
 	function executeSigned(
@@ -34,30 +34,26 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 	{
 		uint256 gasBefore = gasleft();
 
-		// Check nonce
-		require(_nonce == m_signatureNonce, "Invalid nonce");
-
-		// Hash message
-		bytes32 messageHash = keccak256(abi.encode(
-			address(this),
-			_to,
-			_value,
-			_data,
-			_nonce,
-			_gas,
-			_gasPrice,
-			_gasToken
-		));
-
-		m_signatureNonce++;
-		// m_lastTimestamp = now;
-
-		uint256 executionId = _execute(
-			addrToKey(messageHash.toEthSignedMessageHash().recover(_signature)),
-			_to,
-			_value,
-			_data
+		bytes32 key = addrToKey(
+			keccak256(abi.encode(
+				address(this),
+				_to,
+				_value,
+				_data,
+				_nonce,
+				_gas,
+				_gasPrice,
+				_gasToken
+			))
+			.toEthSignedMessageHash()
+			.recover(_signature)
 		);
+
+		// Check nonce
+		require(_nonce == m_keynonces[key], "Invalid nonce");
+		m_keynonces[key]++;
+
+		uint256 executionId = _execute(key _to, _value, _data);
 
 		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
 		return executionId;
@@ -76,19 +72,23 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 	{
 		uint256 gasBefore = gasleft();
 
+		bytes32 key = addrToKey(
+			keccak256(abi.encode(
+				address(this),
+				_id,
+				_value,
+				_nonce
+				_gas,
+				_gasPrice,
+				_gasToken
+			))
+			.toEthSignedMessageHash()
+			.recover(_signature)
+		);
+
 		// Check nonce
-		require(_nonce == m_signatureNonce, "Invalid nonce");
-
-		// Hash message
-		bytes32 messageHash = keccak256(abi.encode(
-			address(this),
-			_id,
-			_value,
-			_nonce
-		));
-
-		m_signatureNonce++;
-		// m_lastTimestamp = now;
+		require(_nonce == m_keynonces[key], "Invalid nonce");
+		m_keynonces[key]++;
 
 		bool success = _approve(
 			addrToKey(messageHash.toEthSignedMessageHash().recover(_signature)),
@@ -97,7 +97,6 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 		);
 
 		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
-
 		return success;
 	}
 

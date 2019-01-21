@@ -6,8 +6,7 @@ contract IERC1077Refund
 	event ExecutedSigned(bytes32 indexed messageHash, uint256 indexed nonce, bool indexed success);
 
 	// Functions
-	function lastNonce    () external view returns (uint256);
-
+	function keyNonce(bytes32 _key) external view returns (uint256)
 
 	function executeSigned(
 		address        _to,

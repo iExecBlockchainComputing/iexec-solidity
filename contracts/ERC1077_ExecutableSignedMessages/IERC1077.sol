@@ -6,15 +6,24 @@ contract IERC1077
 	event ExecutedSigned(bytes32 indexed messageHash, uint256 indexed nonce, bool indexed success);
 
 	// Functions
-	function lastNonce    () external view returns (uint256);
-	function lastTimestamp() external view returns (uint256);
+	function lastNonce() external view returns (uint256);
 
 	function executeSigned(
-		address        to,
-		uint256        value,
-		bytes calldata data,
-		uint256        nonce,
-		bytes calldata signature
+		address        _to,
+		uint256        _value,
+		bytes calldata _data,
+		uint256        _nonce,
+		bytes calldata _signature
 	)
-	external returns (bytes32);
+	external
+	returns (uint256 executionId);
+
+	function approveSigned(
+		uint256        _id,
+		bool           _approve,
+		uint256        _nonce,
+		bytes calldata _signature
+	)
+	external
+	returns (bool success);
 }

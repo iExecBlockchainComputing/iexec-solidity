@@ -12,98 +12,93 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 	using SafeMath for uint256;
 	using ECDSALib for bytes32;
 
-	uint256 m_lastNonce;
-	uint256 m_lastTimestamp;
+	uint256 private m_signatureNonce = 0;
 
 	function lastNonce()
 	external view returns (uint256)
 	{
-		return m_lastNonce;
-	}
-
-	function lastTimestamp()
-	external view returns (uint256)
-	{
-		return m_lastNonce;
+		return m_signatureNonce;
 	}
 
 	function executeSigned(
-		address        to,
-		uint256        value,
-		bytes calldata data,
-		uint256        nonce,
-		uint256        gasPrice,
-		address        gasToken,
-		uint256        gasLimit,
-		OperationType  operationType,
-		bytes calldata signatures)
-	external returns (bytes32)
+		address        _to,
+		uint256        _value,
+		bytes calldata _data,
+		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
+		bytes calldata _signature
+	)
+	external returns (uint256)
 	{
 		uint256 gasBefore = gasleft();
 
 		// Check nonce
-		require(nonce == m_lastNonce, "Invalid nonce");
+		require(_nonce == m_signatureNonce, "Invalid nonce");
 
 		// Hash message
-		bytes32 messageHash = calculateMessageHash(
+		bytes32 messageHash = keccak256(abi.encode(
 			address(this),
-			to,
-			value,
-			data,
-			nonce,
-			gasPrice,
-			gasToken,
-			gasLimit,
-			operationType);
+			_to,
+			_value,
+			_data,
+			_nonce,
+			_gas,
+			_gasPrice,
+			_gasToken
+		));
 
-		// Check signature
-		bytes32 signerKey = addrToKey(messageHash.toEthSignedMessageHash().recover(signatures));
-		if (to == address(this))
-		{
-			require(m_keys.find(signerKey, MANAGEMENT_KEY));
-		}
-		else
-		{
-			require(m_keys.find(signerKey, ACTION_KEY));
-		}
+		m_signatureNonce++;
+		// m_lastTimestamp = now;
 
-		// Perform call
-		bool success;
-		// bytes memory resultdata;
-		(success, /*resultdata*/) = to.call.value(value)(data);
+		uint256 executionId = _execute(
+			addrToKey(messageHash.toEthSignedMessageHash().recover(_signature)),
+			_to,
+			_value,
+			_data
+		);
 
-		// Report
-		emit ExecutedSigned(messageHash, nonce, success);
-		m_lastNonce++;
-		m_lastTimestamp = now;
-
-		refund(gasBefore.sub(gasleft()), gasPrice, gasToken);
-		return messageHash;
+		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+		return executionId;
 	}
 
-	function calculateMessageHash(
-		address       from,
-		address       to,
-		uint256       value,
-		bytes memory  data,
-		uint256       nonce,
-		uint256       gasPrice,
-		address       gasToken,
-		uint256       gasLimit,
-		OperationType operationType)
-	public pure returns (bytes32)
+	function approveSigned(
+		uint256        _id,
+		bool           _value,
+		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
+		bytes calldata _signature
+	)
+	external returns (bool)
 	{
-		return keccak256(abi.encodePacked(
-			from,
-			to,
-			value,
-			keccak256(data),
-			nonce,
-			gasPrice,
-			gasToken,
-			gasLimit,
-			uint256(operationType)
+		uint256 gasBefore = gasleft();
+
+		// Check nonce
+		require(_nonce == m_signatureNonce, "Invalid nonce");
+
+		// Hash message
+		bytes32 messageHash = keccak256(abi.encode(
+			address(this),
+			_id,
+			_value,
+			_nonce
 		));
+
+		m_signatureNonce++;
+		// m_lastTimestamp = now;
+
+		bool success = _approve(
+			addrToKey(messageHash.toEthSignedMessageHash().recover(_signature)),
+			_id,
+			_value
+		);
+
+		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+
+		return success;
 	}
 
 	function refund(uint256 gasUsed, uint256 gasPrice, address gasToken)

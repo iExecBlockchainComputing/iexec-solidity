@@ -53,7 +53,7 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 		require(_nonce == m_keynonces[key], "Invalid nonce");
 		m_keynonces[key]++;
 
-		uint256 executionId = _execute(key _to, _value, _data);
+		uint256 executionId = _execute(key, _to, _value, _data);
 
 		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
 		return executionId;
@@ -77,7 +77,7 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 				address(this),
 				_id,
 				_value,
-				_nonce
+				_nonce,
 				_gas,
 				_gasPrice,
 				_gasToken
@@ -90,11 +90,7 @@ contract ERC1077Refund is IERC1077Refund, ERC725
 		require(_nonce == m_keynonces[key], "Invalid nonce");
 		m_keynonces[key]++;
 
-		bool success = _approve(
-			addrToKey(messageHash.toEthSignedMessageHash().recover(_signature)),
-			_id,
-			_value
-		);
+		bool success = _approve(key, _id, _value);
 
 		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
 		return success;

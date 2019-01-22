@@ -1,14 +1,14 @@
 pragma solidity ^0.5.0;
 
 import "./KeyStoreLib.sol";
-import "./ERC725Pausable.sol";
+import "./ERC725KeyBase.sol";
 
 /// @title KeyManager
 /// @author Mircea Pasoi
 /// @notice Implement add/remove functions from ERC725 spec
 /// @dev Key data is stored using KeyStore library. Inheriting ERC725 for the events
 
-contract ERC725KeyManager is ERC725Pausable
+contract ERC725KeyManager is ERC725KeyBase
 {
 	/// @dev Add key data to the identity if key + purpose tuple doesn't already exist
 	/// @param _key Key bytes to add
@@ -22,7 +22,6 @@ contract ERC725KeyManager is ERC725Pausable
 	)
 	external
 	onlyManagement
-	whenNotPaused
 	returns (bool success)
 	{
 		if (m_keys.find(_key, _purpose))
@@ -44,7 +43,6 @@ contract ERC725KeyManager is ERC725Pausable
 	)
 	external
 	onlyManagement
-	whenNotPaused
 	returns (bool success)
 	{
 		if (!m_keys.find(_key, _purpose))

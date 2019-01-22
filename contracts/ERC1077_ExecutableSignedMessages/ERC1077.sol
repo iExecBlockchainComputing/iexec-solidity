@@ -25,11 +25,14 @@ contract ERC1077 is IERC1077, ERC725
 		uint256        _value,
 		bytes calldata _data,
 		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
 		bytes calldata _signature
 	)
 	external returns (uint256)
 	{
-		// uint256 gasBefore = gasleft();
+		uint256 gasBefore = gasleft();
 
 		bytes32 key = addrToKey(
 			keccak256(abi.encode(
@@ -38,9 +41,9 @@ contract ERC1077 is IERC1077, ERC725
 				_value,
 				_data,
 				_nonce,
-				uint256(0),
-				uint256(0),
-				address(0)
+				_gas,
+				_gasPrice,
+				_gasToken
 			))
 			.toEthSignedMessageHash()
 			.recover(_signature)
@@ -52,7 +55,7 @@ contract ERC1077 is IERC1077, ERC725
 
 		uint256 executionId = _execute(key, _to, _value, _data);
 
-		// refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
 		return executionId;
 	}
 
@@ -60,11 +63,14 @@ contract ERC1077 is IERC1077, ERC725
 		uint256        _id,
 		bool           _value,
 		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
 		bytes calldata _signature
 	)
 	external returns (bool)
 	{
-		// uint256 gasBefore = gasleft();
+		uint256 gasBefore = gasleft();
 
 		bytes32 key = addrToKey(
 			keccak256(abi.encode(
@@ -72,9 +78,9 @@ contract ERC1077 is IERC1077, ERC725
 				_id,
 				_value,
 				_nonce,
-				uint256(0),
-				uint256(0),
-				address(0)
+				_gas,
+				_gasPrice,
+				_gasToken
 			))
 			.toEthSignedMessageHash()
 			.recover(_signature)
@@ -86,8 +92,21 @@ contract ERC1077 is IERC1077, ERC725
 
 		bool success = _approve(key, _id, _value);
 
-		// refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
 		return success;
 	}
 
+	function refund(uint256 gasUsed, uint256 gasPrice, address gasToken)
+	private
+	{
+		if (gasToken != address(0))
+		{
+			IERC20 token = IERC20(gasToken);
+			token.transfer(msg.sender, gasUsed.mul(gasPrice));
+		}
+		else
+		{
+			msg.sender.transfer(gasUsed.mul(gasPrice));
+		}
+	}
 }

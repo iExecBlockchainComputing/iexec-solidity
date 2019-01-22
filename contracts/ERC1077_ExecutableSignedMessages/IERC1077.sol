@@ -13,6 +13,9 @@ contract IERC1077
 		uint256        _value,
 		bytes calldata _data,
 		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
 		bytes calldata _signature
 	)
 	external
@@ -22,6 +25,9 @@ contract IERC1077
 		uint256        _id,
 		bool           _approve,
 		uint256        _nonce,
+		uint256        _gas,
+		uint256        _gasPrice,
+		address        _gasToken,
 		bytes calldata _signature
 	)
 	external

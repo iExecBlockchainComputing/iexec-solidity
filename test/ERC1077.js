@@ -34,54 +34,85 @@ contract('Identity: ERC1077', async (accounts) => {
 		await IdentityInstance.addKey(accounthashs[0].key, 2, 1, { from: accounthashs[0].addr })
 	});
 
-	it("---", async () => {
 
+	it("balance before", async () => {
 		console.log("balance id:", web3.utils.fromWei(await web3.eth.getBalance(IdentityInstance.address), "ether"));
 		console.log("balance 0: ", web3.utils.fromWei(await web3.eth.getBalance(accounts[0]),              "ether"));
 		console.log("balance 1: ", web3.utils.fromWei(await web3.eth.getBalance(accounts[1]),              "ether"));
+	});
 
+	it("tx", async () => {
 		await web3.eth.sendTransaction({
 			from:  accounts[0],
 			to:    IdentityInstance.address,
 			value: web3.utils.toWei("1", "ether")
 		});
+	});
 
+	it("balance after", async () => {
 		console.log("balance id:", web3.utils.fromWei(await web3.eth.getBalance(IdentityInstance.address), "ether"));
 		console.log("balance 0: ", web3.utils.fromWei(await web3.eth.getBalance(accounts[0]),              "ether"));
 		console.log("balance 1: ", web3.utils.fromWei(await web3.eth.getBalance(accounts[1]),              "ether"));
+	});
 
-		tx = {
+	function signMetaTx(metatx, signer)
+	{
+		return new Promise(async (resolve, reject) => {
+			metatx.value    = metatx.value    || 0;
+			metatx.data     = metatx.data     || "0x";
+			metatx.nonce    = metatx.nonce    || Number(await IdentityInstance.keyNonce(web3.utils.keccak256([ "address" ], [ signer ])));
+			metatx.gas      = metatx.gas      || 0;
+			metatx.gasPrice = metatx.gasPrice || 0;
+			metatx.gasToken = metatx.gasToken || "0x0000000000000000000000000000000000000000";
+
+			web3.eth.sign(
+				web3.utils.keccak256(web3.eth.abi.encodeParameters([
+					"address",
+					"address",
+					"uint256",
+					"bytes",
+					"uint256",
+					"uint256",
+					"uint256",
+					"address",
+				],[
+					metatx.from,
+					metatx.to,
+					metatx.value,
+					metatx.data,
+					metatx.nonce,
+					metatx.gas,
+					metatx.gasPrice,
+					metatx.gasToken,
+				])),
+				signer
+			).then(signature => {
+				metatx.signature = signature;
+				resolve(metatx);
+			});
+		});
+	}
+
+	it("meta tx", async () => {
+
+		signer = accounthashs[0];
+
+		tx = await signMetaTx({
 			from:     IdentityInstance.address,
 			to:       accounts[1],
-			// gasPrice: "20000000000",
-			// gas:      "21000",
 			value:    web3.utils.toWei("1", "ether"),
-			data:     "0x",
-			nonce:    Number(await IdentityInstance.lastNonce()),
-		};
+		}, signer.addr);
 
-		tx.signature = await web3.eth.sign(
-			web3.utils.keccak256(web3.eth.abi.encodeParameters([
-				"address",
-				"address",
-				"uint256",
-				"bytes",
-				"uint256",
-			],[
-				tx.from,
-				tx.to,
-				tx.value,
-				tx.data,
-				tx.nonce,
-			])),
-			accounts[0]
-		);
+		console.log(tx)
 
 		txMined = await IdentityInstance.executeSigned(
 			tx.to,
 			tx.value,
 			tx.data,
 			tx.nonce,
+			tx.gas,
+			tx.gasPrice,
+			tx.gasToken,
 			tx.signature,
 			{ from : accounts[5] }
 		);

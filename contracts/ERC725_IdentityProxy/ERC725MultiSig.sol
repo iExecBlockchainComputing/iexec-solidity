@@ -1,13 +1,13 @@
 pragma solidity ^0.5.0;
 
-import "./ERC725Pausable.sol";
+import "./ERC725KeyBase.sol";
 
 /// @title MultiSig
 /// @author Mircea Pasoi
 /// @notice Implement execute and multi-sig functions from ERC725 spec
 /// @dev Key data is stored using KeyStore library. Inheriting ERC725 for the getters
 
-contract ERC725MultiSig is ERC725Pausable
+contract ERC725MultiSig is ERC725KeyBase
 {
 	struct Execution
 	{
@@ -27,7 +27,6 @@ contract ERC725MultiSig is ERC725Pausable
 	/// @param _threshold New threshold to change it to (will throw if 0 or larger than available keys)
 	function changeManagementThreshold(uint256 _threshold)
 	external
-	whenNotPaused
 	onlyManagement
 	{
 		// Don't lock yourself out
@@ -39,7 +38,6 @@ contract ERC725MultiSig is ERC725Pausable
 	/// @param _threshold New threshold to change it to (will throw if 0 or larger than available keys)
 	function changeActionThreshold(uint256 _threshold)
 	external
-	whenNotPaused
 	onlyManagement
 	{
 		// Don't lock yourself out
@@ -92,7 +90,6 @@ contract ERC725MultiSig is ERC725Pausable
 		bytes memory _data
 	)
 	internal
-	whenNotPaused
 	returns (uint256 executionId)
 	{
 		// Must be required by the right key
@@ -160,7 +157,6 @@ contract ERC725MultiSig is ERC725Pausable
 		bool    _value
 	)
 	internal
-	whenNotPaused
 	returns (bool success)
 	{
 		Execution storage execution = executions[_id];

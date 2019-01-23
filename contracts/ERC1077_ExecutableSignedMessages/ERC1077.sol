@@ -25,7 +25,7 @@ contract ERC1077 is IERC1077, ERC725
 		uint256        _value,
 		bytes calldata _data,
 		uint256        _nonce,
-		uint256        _gas,
+		uint256        _gasLimit,
 		uint256        _gasPrice,
 		address        _gasToken,
 		bytes calldata _signature
@@ -41,7 +41,7 @@ contract ERC1077 is IERC1077, ERC725
 				_value,
 				_data,
 				_nonce,
-				_gas,
+				_gasLimit,
 				_gasPrice,
 				_gasToken
 			))
@@ -49,13 +49,13 @@ contract ERC1077 is IERC1077, ERC725
 			.recover(_signature)
 		);
 
-		// Check nonce
+		// Check nonce & increment
 		require(_nonce == m_keynonces[key], "Invalid nonce");
 		m_keynonces[key]++;
 
-		uint256 executionId = _execute(key, _to, _value, _data);
+		uint256 executionId = __execute(key, _to, _value, _data);
 
-		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+		refund(gasBefore.sub(gasleft()).min(_gasLimit), _gasPrice, _gasToken);
 		return executionId;
 	}
 
@@ -63,7 +63,7 @@ contract ERC1077 is IERC1077, ERC725
 		uint256        _id,
 		bool           _value,
 		uint256        _nonce,
-		uint256        _gas,
+		uint256        _gasLimit,
 		uint256        _gasPrice,
 		address        _gasToken,
 		bytes calldata _signature
@@ -78,7 +78,7 @@ contract ERC1077 is IERC1077, ERC725
 				_id,
 				_value,
 				_nonce,
-				_gas,
+				_gasLimit,
 				_gasPrice,
 				_gasToken
 			))
@@ -90,9 +90,9 @@ contract ERC1077 is IERC1077, ERC725
 		require(_nonce == m_keynonces[key], "Invalid nonce");
 		m_keynonces[key]++;
 
-		bool success = _approve(key, _id, _value);
+		bool success = __approve(key, _id, _value);
 
-		refund(gasBefore.sub(gasleft()).min(_gas), _gasPrice, _gasToken);
+		refund(gasBefore.sub(gasleft()).min(_gasLimit), _gasPrice, _gasToken);
 		return success;
 	}
 

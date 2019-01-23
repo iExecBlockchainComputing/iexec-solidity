@@ -46,25 +46,21 @@ contract ERC725MultiSig is ERC725KeyBase
 	}
 
 	/// @dev call a contract method, or transfer ether
-	/// @param _id Execution ID
 	/// @param _to Execution target
 	/// @param _value Execution value
 	/// @param _data Execution data
 	/// @return `true` if the execution succeeded, `false` otherwise
-	function _call(
+	function __executeCall(
 		uint256      _id,
 		address      _to,
 		uint256      _value,
 		bytes memory _data
 	)
-	private
-	returns (bool)
+	internal
+	returns (bool success)
+	// returns (bool success, bytes memory returndata)
 	{
 		// Call
-		// TODO: Should we also support DelegateCall and Create (new contract)?
-		// solhint-disable-next-line avoid-call-value
-		bool success;
-		// bytes memory returndata;
 		(success, /*returndata*/) = _to.call.value(_value)(_data);
 
 		if (success)
@@ -75,7 +71,6 @@ contract ERC725MultiSig is ERC725KeyBase
 		{
 			emit ExecutionFailed(_id, _to, _value, _data);
 		}
-		return success;
 	}
 
 	/// @dev Generate a unique ID for an execution request
@@ -83,7 +78,7 @@ contract ERC725MultiSig is ERC725KeyBase
 	/// @param _to address being called (msg.sender)
 	/// @param _value ether being sent (msg.value)
 	/// @param _data ABI encoded call data (msg.data)
-	function _execute(
+	function __execute(
 		bytes32       _key,
 		address       _to,
 		uint256       _value,
@@ -117,7 +112,7 @@ contract ERC725MultiSig is ERC725KeyBase
 		uint256 threshold = (_to == address(this)) ? managementThreshold : actionThreshold;
 		if (approved[executionId].length >= threshold)
 		{
-			_call(executionId, _to, _value, _data);
+			__executeCall(executionId, _to, _value, _data);
 			// delete executions[_id];
 			// delete approved[_id];
 		}
@@ -137,7 +132,7 @@ contract ERC725MultiSig is ERC725KeyBase
 	external
 	returns (uint256 executionId)
 	{
-		return _execute(addrToKey(msg.sender), _to, _value, _data);
+		return __execute(addrToKey(msg.sender), _to, _value, _data);
 	}
 
 	/// @dev Approves an execution. If the execution is being approved multiple times,
@@ -151,7 +146,7 @@ contract ERC725MultiSig is ERC725KeyBase
 	///  if it's an approval that triggered a failed execution. `true` if it's a disapproval that
 	///  undos a previous approval from the sender OR if it's an approval that succeded OR
 	///  if it's an approval that triggered a succesful execution
-	function _approve(
+	function __approve(
 		bytes32 _key,
 		uint256 _id,
 		bool    _value
@@ -194,7 +189,7 @@ contract ERC725MultiSig is ERC725KeyBase
 			uint256 threshold = (execution.to == address(this)) ? managementThreshold : actionThreshold;
 			if (approvals.length >= threshold)
 			{
-				return _call(_id, execution.to, execution.value, execution.data);
+				return __executeCall(_id, execution.to, execution.value, execution.data);
 				// delete executions[_id];
 				// delete approved[_id];
 			}
@@ -232,6 +227,6 @@ contract ERC725MultiSig is ERC725KeyBase
 	external
 	returns (bool success)
 	{
-		return _approve(addrToKey(msg.sender), _id, _value);
+		return __approve(addrToKey(msg.sender), _id, _value);
 	}
 }

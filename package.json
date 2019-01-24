@@ -1,6 +1,6 @@
 {
   "name": "iexec-solidity",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "truffle.js",
   "scripts": {
@@ -17,7 +17,8 @@
     "url": "https://github.com/iExecBlockchainComputing/iexec-solidity.git/issues"
   },
   "files": [
-    "/contracts"
+    "/contracts",
+		"/utils"
   ],
   "author": "iExec",
   "license": "ISC",

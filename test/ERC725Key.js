@@ -1,7 +1,5 @@
 var Identity = artifacts.require("./Identity.sol");
 
-const tools = require("../utils/tools.js")
-
 function extractEvents(txMined, address, name)
 {
 	return txMined.logs.filter((ev) => { return ev.address == address && ev.event == name });

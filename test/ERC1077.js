@@ -2,71 +2,7 @@ var Identity     = artifacts.require("./Identity.sol");
 var TestContract = artifacts.require("./TestContract.sol");
 
 const { shouldFail } = require('openzeppelin-test-helpers');
-const   tools        = require("../utils/tools.js")
-
-function prepareData(target, method, args)
-{
-	return web3.eth.abi.encodeFunctionCall(target.abi.filter(e => e.type == "function" && e.name == method)[0], args);
-}
-
-function signMetaTX(identity, metatx, signer)
-{
-	return new Promise(async (resolve, reject) => {
-		if (metatx.from     == undefined) metatx.from     = identity.address;
-		if (metatx.value    == undefined) metatx.value    = 0;
-		if (metatx.data     == undefined) metatx.data     = [];
-		if (metatx.nonce    == undefined) metatx.nonce    = Number(await identity.keyNonce(web3.utils.keccak256(signer)));
-		if (metatx.gas      == undefined) metatx.gas      = 0;
-		if (metatx.gasPrice == undefined) metatx.gasPrice = 0;
-		if (metatx.gasToken == undefined) metatx.gasToken = "0x0000000000000000000000000000000000000000";
-
-		web3.eth.sign(
-			web3.utils.keccak256(web3.eth.abi.encodeParameters([
-				"address",
-				"address",
-				"uint256",
-				"bytes",
-				"uint256",
-				"uint256",
-				"uint256",
-				"address",
-			],[
-				metatx.from,
-				metatx.to,
-				metatx.value,
-				metatx.data,
-				metatx.nonce,
-				metatx.gas,
-				metatx.gasPrice,
-				metatx.gasToken,
-			])),
-			signer
-		)
-		.then(signature => { metatx.signature = signature; resolve(metatx); })
-		.catch(reject);
-	});
-}
-
-function sendMetaTX(identity, metatx, signer, relay)
-{
-	return new Promise(async (resolve, reject) => {
-		signMetaTX(identity, metatx, signer).then((signedmetatx) => {
-			identity.executeSigned(
-				signedmetatx.to,
-				signedmetatx.value,
-				signedmetatx.data,
-				signedmetatx.nonce,
-				signedmetatx.gas,
-				signedmetatx.gasPrice,
-				signedmetatx.gasToken,
-				signedmetatx.signature,
-				{ from : relay }
-			)
-			.then(resolve)
-			.catch(reject);
-		})
-	});
-}
+const   metaTX       = require("../utils/metaTX.js")
 
 function extractEvents(txMined, address, name)
 {
@@ -125,7 +61,7 @@ contract('Identity: ERC1077', async (accounts) => {
 		assert.equal(await IdentityInstance.keyNonce(accounthashs[0].key), 0);
 		assert.equal(await web3.eth.getBalance(IdentityInstance.address), web3.utils.toWei("1", "ether"));
 
-		txMined = await sendMetaTX(
+		txMined = await metaTX.sendMetaTX(
 			IdentityInstance,
 			{
 				to:     accounts[1],
@@ -156,7 +92,7 @@ contract('Identity: ERC1077', async (accounts) => {
 		assert.equal(await web3.eth.getBalance(IdentityInstance.address), web3.utils.toWei(".9", "ether"));
 
 
-		await shouldFail.reverting(sendMetaTX(
+		await shouldFail.reverting(metaTX.sendMetaTX(
 			IdentityInstance,
 			{
 				to:     accounts[1],
@@ -175,7 +111,7 @@ contract('Identity: ERC1077', async (accounts) => {
 		assert.equal(await IdentityInstance.keyNonce(accounthashs[1].key), 0);
 		assert.equal(await web3.eth.getBalance(IdentityInstance.address), web3.utils.toWei(".9", "ether"));
 
-		await shouldFail.reverting(sendMetaTX(
+		await shouldFail.reverting(metaTX.sendMetaTX(
 			IdentityInstance,
 			{
 				to:     accounts[1],
@@ -193,7 +129,7 @@ contract('Identity: ERC1077', async (accounts) => {
 		assert.equal(await IdentityInstance.keyNonce(accounthashs[0].key), 1);
 		assert.equal(await web3.eth.getBalance(IdentityInstance.address), web3.utils.toWei(".9", "ether"));
 
-		txMined = await sendMetaTX(
+		txMined = await metaTX.sendMetaTX(
 			IdentityInstance,
 			{
 				to:     accounts[1],
@@ -233,11 +169,11 @@ contract('Identity: ERC1077', async (accounts) => {
 		assert.equal(await target.value(),  null);
 		assert.equal(await target.caller(), "0x0000000000000000000000000000000000000000");
 
-		txMined = await sendMetaTX(
+		txMined = await metaTX.sendMetaTX(
 			IdentityInstance,
 			{
 				to:   target.address,
-				data: prepareData(target, "set", [ randbytes ]),
+				data: metaTX.prepareData(target, "set", [ randbytes ]),
 			},
 			accounts[0],
 			accounts[5],

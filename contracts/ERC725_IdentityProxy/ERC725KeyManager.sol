@@ -24,6 +24,7 @@ contract ERC725KeyManager is ERC725KeyBase
 	onlyManagement
 	returns (bool success)
 	{
+		// Avoid duplicate
 		if (m_keys.find(_key, _purpose))
 		{
 			return false;
@@ -45,6 +46,12 @@ contract ERC725KeyManager is ERC725KeyBase
 	onlyManagement
 	returns (bool success)
 	{
+		// Don't lock the identity
+		if (_purpose == MANAGEMENT_KEY && m_keys.keysByPurpose[MANAGEMENT_KEY].length == managementThreshold)
+		{
+			return false;
+		}
+		// Key must exist
 		if (!m_keys.find(_key, _purpose))
 		{
 			return false;

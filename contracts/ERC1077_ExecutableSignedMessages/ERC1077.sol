@@ -50,8 +50,7 @@ contract ERC1077 is IERC1077, ERC725
 		);
 
 		// Check nonce & increment
-		require(_nonce == m_keynonces[key], "Invalid nonce");
-		m_keynonces[key]++;
+		require(_nonce == ++m_keynonces[key], "Invalid nonce");
 
 		uint256 executionId = __execute(key, _to, _value, _data);
 
@@ -99,14 +98,13 @@ contract ERC1077 is IERC1077, ERC725
 	function refund(uint256 gasUsed, uint256 gasPrice, address gasToken)
 	private
 	{
-		if (gasToken != address(0))
+		if (gasToken == address(0))
 		{
-			IERC20 token = IERC20(gasToken);
-			token.transfer(msg.sender, gasUsed.mul(gasPrice));
+			msg.sender.transfer(gasUsed.mul(gasPrice));
 		}
 		else
 		{
-			msg.sender.transfer(gasUsed.mul(gasPrice));
+			IERC20(gasToken).transfer(msg.sender, gasUsed.mul(gasPrice));
 		}
 	}
 }

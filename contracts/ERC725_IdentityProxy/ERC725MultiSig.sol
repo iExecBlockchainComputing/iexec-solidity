@@ -9,12 +9,15 @@ import "./ERC725KeyBase.sol";
 
 contract ERC725MultiSig is ERC725KeyBase
 {
+
 	struct Execution
 	{
 		address to;
 		uint256 value;
 		bytes   data;
 	}
+
+	event ContractCreated(uint256 indexed executionId, address newContract);
 
 	// To prevent replay attacks
 	uint256 private m_nonce = 0;
@@ -41,7 +44,7 @@ contract ERC725MultiSig is ERC725KeyBase
 	onlyManagement
 	{
 		// Don't lock yourself out
-		require(_threshold > 0 && _threshold <= m_keys.keysByPurpose[ACTION_KEY].length);
+		require(_threshold > 0 && _threshold <= m_keys.keysByPurpose[ACTION_KEY].length); // TODO: keep second condition?
 		actionThreshold = _threshold;
 	}
 
@@ -60,8 +63,24 @@ contract ERC725MultiSig is ERC725KeyBase
 	returns (bool success)
 	// returns (bool success, bytes memory returndata)
 	{
-		// Call
-		(success, /*returndata*/) = _to.call.value(_value)(_data);
+		if (_to == address(0)) // Create
+		{
+			address newContract;
+			assembly
+			{
+				newContract := create(0, add(_data, 0x20), mload(_data))
+			}
+			success = true;
+			emit ContractCreated(_id, newContract);
+		}
+		else // Call
+		{
+			// (success, /*returndata*/) = _to.call.value(_value)(_data);
+			assembly
+			{
+				success := call(gas, _to, _value, add(_data, 0x20), mload(_data), 0, 0)
+			}
+		}
 
 		if (success)
 		{
@@ -99,7 +118,7 @@ contract ERC725MultiSig is ERC725KeyBase
 			_to,
 			_value,
 			_data,
-			m_nonce++
+			++m_nonce
 		)));
 
 		executions[executionId].to    = _to;

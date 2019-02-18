@@ -25,7 +25,7 @@ contract ERC725KeyBase is IERC725
 
 	// For multi-sig
 	uint256 public managementThreshold = 1;
-	uint256 public actionThreshold = 1;
+	uint256 public actionThreshold     = 1;
 
 	/// @dev Modifier that only allows keys of purpose 1, or the identity itself
 	modifier onlyManagement

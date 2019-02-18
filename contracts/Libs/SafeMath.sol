@@ -98,7 +98,7 @@ library SafeMath
 	}
 
 	/**
-	* @dev Returns the base 2 log of x	
+	* @dev Returns the base 2 log of x
 	* @notice Source : https://ethereum.stackexchange.com/questions/8086/logarithm-math-operation-in-solidity
 	*/
 	function log(uint x) internal pure returns (uint y)

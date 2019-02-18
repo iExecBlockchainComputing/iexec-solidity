@@ -1,5 +1,7 @@
 var Identity = artifacts.require("./Identity.sol");
 
+const { shouldFail } = require('openzeppelin-test-helpers');
+
 function extractEvents(txMined, address, name)
 {
 	return txMined.logs.filter((ev) => { return ev.address == address && ev.event == name });
@@ -91,9 +93,9 @@ contract('Identity: ERC725Key', async (accounts) => {
 		assert.equal    (entry.key,                          accounthashs[0].key);
 
 		entry = await IdentityInstance.getKey(accounthashs[1].key);
-		assert.deepEqual(entry.purposes.map(e => Number(e)), []              );
-		assert.equal    (entry.keyType,                      0               );
-		assert.equal    (entry.key,                          0               );
+		assert.deepEqual(entry.purposes.map(e => Number(e)), []);
+		assert.equal    (entry.keyType,                      0 );
+		assert.equal    (entry.key,                          0 );
 
 		assert.isTrue(await IdentityInstance.keyHasPurpose(accounthashs[0].key, 1));
 		assert.isTrue(await IdentityInstance.keyHasPurpose(accounthashs[0].key, 2));
@@ -107,10 +109,10 @@ contract('Identity: ERC725Key', async (accounts) => {
 	});
 
 	it("Management #2", async () => {
-		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 1, 1, { from: accounthashs[1].addr }));
-		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 2, 1, { from: accounthashs[1].addr }));
-		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 3, 1, { from: accounthashs[1].addr }));
-		await tools.reverts(() => IdentityInstance.addKey(accounthashs[1].key, 4, 1, { from: accounthashs[1].addr }));
+		await shouldFail.reverting(IdentityInstance.addKey(accounthashs[1].key, 1, 1, { from: accounthashs[1].addr }));
+		await shouldFail.reverting(IdentityInstance.addKey(accounthashs[1].key, 2, 1, { from: accounthashs[1].addr }));
+		await shouldFail.reverting(IdentityInstance.addKey(accounthashs[1].key, 3, 1, { from: accounthashs[1].addr }));
+		await shouldFail.reverting(IdentityInstance.addKey(accounthashs[1].key, 4, 1, { from: accounthashs[1].addr }));
 	});
 
 });

@@ -30,11 +30,10 @@ contract ERC725KeyBase is IERC725
 	/// @dev Modifier that only allows keys of purpose 1, or the identity itself
 	modifier onlyManagement
 	{
-		require(
-			msg.sender == address(this)
-			||
-			(managementThreshold == 1 && m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY))
-		);
+		if (msg.sender != address(this))
+		{
+			require(managementThreshold == 1 && m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY));
+		}
 		_;
 	}
 }

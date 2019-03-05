@@ -1,14 +1,14 @@
 pragma solidity ^0.5.0;
 
 import "./KeyStoreLib.sol";
-import "./ERC725KeyBase.sol";
+import "./ERC734KeyBase.sol";
 
 /// @title KeyManager
 /// @author Mircea Pasoi
-/// @notice Implement getter functions from ERC725 spec
+/// @notice Implement getter functions from ERC734 spec
 /// @dev Key data is stored using KeyStore library
 
-contract ERC725KeyGetters is ERC725KeyBase
+contract ERC734KeyGetters is ERC734KeyBase
 {
 	/// @dev Number of keys managed by the contract
 	/// @return Unsigned integer number of keys

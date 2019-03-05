@@ -1,20 +1,20 @@
 pragma solidity ^0.5.0;
 
-import "./IERC725.sol";
+import "./IERC734.sol";
 import "./KeyStoreLib.sol";
 
 /// @title KeyManager
 /// @author Mircea Pasoi
-/// @notice Abstract contract for ERC725 implementation
+/// @notice Abstract contract for ERC734 implementation
 /// @dev Key data is stored using KeyStore library
 
-contract ERC725KeyBase is IERC725
+contract ERC734KeyBase is IERC734
 {
 	// Key storage
 	using KeyStoreLib for KeyStoreLib.Keys;
 	KeyStoreLib.Keys internal m_keys;
 
-	/// @dev Convert an Ethereum address (20 bytes) to an ERC725 key (32 bytes)
+	/// @dev Convert an Ethereum address (20 bytes) to an ERC734 key (32 bytes)
 	function addrToKey(address addr)
 	public
 	pure

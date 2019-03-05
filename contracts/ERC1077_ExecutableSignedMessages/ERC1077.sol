@@ -4,10 +4,10 @@ import "../Libs/SafeMath.sol";
 import "../Libs/ECDSALib.sol";
 
 import "../ERC20_Token/IERC20.sol";
-import "../ERC725_IdentityProxy/ERC725.sol";
+import "../ERC734_KeyManager/ERC734.sol";
 import "./IERC1077.sol";
 
-contract ERC1077 is IERC1077, ERC725
+contract ERC1077 is IERC1077, ERC734
 {
 	using SafeMath for uint256;
 	using ECDSALib for bytes32;

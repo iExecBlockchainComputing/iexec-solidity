@@ -32,7 +32,7 @@ contract ERC734KeyBase is IERC734
 	{
 		if (msg.sender != address(this))
 		{
-			require(managementThreshold == 1 && m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY));
+			require(managementThreshold == 1 && m_keys.find(addrToKey(msg.sender), MANAGEMENT_KEY), "only-management");
 		}
 		_;
 	}

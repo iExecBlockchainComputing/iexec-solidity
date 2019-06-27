@@ -1,6 +1,7 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.10;
 
-import "./ERC1538UpgradeableStorage.sol";
+import "./ERC1538Store.sol";
+
 
 interface ERC1538
 {
@@ -9,10 +10,7 @@ interface ERC1538
 	function updateContract(address _delegate, string calldata _functionSignatures, string calldata commitMessage) external;
 }
 
-// Function signatures
-// "updateContract(address,strig,strig)"
-
-contract ERC1538Delegate is ERC1538, ERC1538UpgradeableStorage
+contract ERC1538Delegate is ERC1538, ERC1538Store
 {
 	function updateContract(
 		address         _delegate,
@@ -26,24 +24,34 @@ contract ERC1538Delegate is ERC1538, ERC1538UpgradeableStorage
 		uint256 pos;
 		uint256 end;
 		uint256 size;
-		if(_delegate != address(0))
+
+		if (_delegate != address(0))
 		{
-			assembly { size := extcodesize(_delegate) }
+			assembly
+			{
+				size := extcodesize(_delegate)
+			}
 			require(size > 0, "[ERC1538] _delegate address is not a contract and is not address(0)");
 		}
 		assembly
 		{
-			start := add(signatures,32)
+			start := add(signatures, 32)
 			end   := add(start, mload(signatures))
 		}
 		for (pos = start; pos < end; ++pos)
 		{
 			uint256 char;
-			assembly { char := byte(0, mload(pos)) }
-			if (char == 0x3B)
+			assembly
+			{
+				char := byte(0, mload(pos))
+			}
+			if (char == 0x3B) // 0x3B = ';'
 			{
 				size = (pos - start);
-				assembly { mstore(signatures, size) }
+				assembly
+				{
+					mstore(signatures, size)
+				}
 				bytes4  funcId      = bytes4(keccak256(signatures));
 				address oldDelegate = m_delegates[funcId];
 				if (_delegate == address(0))
@@ -75,7 +83,10 @@ contract ERC1538Delegate is ERC1538, ERC1538UpgradeableStorage
 					m_delegates[funcId] = _delegate;
 					emit FunctionUpdate(funcId, oldDelegate, _delegate, string(signatures));
 				}
-				assembly { signatures := add(signatures, add(size, 1)) }
+				assembly
+				{
+					signatures := add(signatures, add(size, 1))
+				}
 				start = ++pos;
 			}
 		}

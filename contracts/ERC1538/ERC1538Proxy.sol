@@ -1,8 +1,9 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.10;
 
-import "./ERC1538UpgradeableStorage.sol";
+import "./ERC1538Store.sol";
 
-contract IexecProxy is ERC1538UpgradeableStorage
+
+contract ERC1538Proxy is ERC1538Store
 {
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
@@ -10,7 +11,7 @@ contract IexecProxy is ERC1538UpgradeableStorage
 	constructor(address _erc1538Delegate)
 	public
 	{
-		m_owner = msg.sender;
+		transferOwnership(msg.sender);
 
 		//Adding ERC1538 updateContract function
 		bytes memory signature = "updateContract(address,string,string)";
@@ -28,7 +29,8 @@ contract IexecProxy is ERC1538UpgradeableStorage
 	{
 		address delegate = m_delegates[msg.sig];
 		require(delegate != address(0), "Function does not exist.");
-		assembly {
+		assembly
+		{
 			let ptr := mload(0x40)
 			calldatacopy(ptr, 0, calldatasize)
 			let result := delegatecall(gas, delegate, ptr, calldatasize, 0, 0)

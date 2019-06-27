@@ -1,16 +1,10 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.10;
 
-// import "../tools/Ownable.sol";
-contract ERC1538UpgradeableStorage// is OwnableMutable
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+
+contract ERC1538Store is Ownable
 {
-	// m_owner from OwnableMutable
-	address m_owner;
-	modifier onlyOwner()
-	{
-		require(msg.sender == m_owner);
-		_;
-	}
-
 	// maps functions to the delegate contracts that execute the functions
 	// funcId => delegate contract
 	mapping(bytes4 => address) internal m_delegates;

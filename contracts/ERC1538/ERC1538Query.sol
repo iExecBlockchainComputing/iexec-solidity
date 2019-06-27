@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "./ERC1538UpgradeableStorage.sol";
+import "./ERC1538Store.sol";
+
 
 interface ERC1538Query
 {
@@ -14,10 +15,7 @@ interface ERC1538Query
 	function delegateAddresses         (                           ) external view returns(address[] memory);
 }
 
-// Function signatures
-// "totalFunctions()functionByIndex(uint256)functionById(bytes4)functionExists(string)functionSignatures()delegateFunctionSignatures(address)delegateAddress(string)delegateAddresses()"
-
-contract ERC1538QueryDelegate is ERC1538Query, ERC1538UpgradeableStorage
+contract ERC1538QueryDelegate is ERC1538Query, ERC1538Store
 {
 	function totalFunctions()
 	external view returns(uint256)

@@ -1,6 +1,6 @@
 {
   "name": "iexec-solidity",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "truffle.js",
   "scripts": {
@@ -18,14 +18,15 @@
   },
   "files": [
     "/contracts",
-		"/utils"
+		"/build",
+    "/utils"
   ],
   "author": "iExec",
   "license": "ISC",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
-  "dependencies": {},
   "devDependencies": {
     "ganache-cli": "^6.2.4",
+    "openzeppelin-solidity": "^2.3.0",
     "openzeppelin-test-helpers": "^0.1.2",
     "truffle": "^5.0.0"
   }

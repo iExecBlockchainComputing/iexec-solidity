@@ -1,6 +1,6 @@
 {
   "name": "iexec-solidity",
-  "version": "0.0.12-beta.2",
+  "version": "0.0.13",
   "description": "",
   "main": "truffle.js",
   "scripts": {

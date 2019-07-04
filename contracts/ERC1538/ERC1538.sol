@@ -2,94 +2,40 @@ pragma solidity ^0.5.10;
 
 import "./ERC1538Store.sol";
 
-
-interface ERC1538
+contract ERC1538 is ERC1538Store
 {
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
-	function updateContract(address _delegate, string calldata _functionSignatures, string calldata commitMessage) external;
-}
 
-contract ERC1538Delegate is ERC1538, ERC1538Store
-{
-	function updateContract(
-		address         _delegate,
-		string calldata _functionSignatures,
-		string calldata _commitMessage
-	)
-	external onlyOwner
+	function _setFunc(bytes memory funcSignature, address funcDelegate)
+	internal
 	{
-		bytes memory signatures = bytes(_functionSignatures);
-		uint256 start;
-		uint256 pos;
-		uint256 end;
-		uint256 size;
+		bytes4  funcId      = bytes4(keccak256(funcSignature));
+		address oldDelegate = m_funcDelegates[funcId];
 
-		if (_delegate != address(0))
+		if (funcDelegate == address(0))
 		{
-			assembly
+			uint256 index     = m_funcIndex[funcId] - 1;
+			uint256 lastIndex = m_funcSignatures.length - 1;
+			if (index != lastIndex)
 			{
-				size := extcodesize(_delegate)
+				m_funcSignatures[index] = m_funcSignatures[lastIndex];
+				m_funcIndex[bytes4(keccak256(m_funcSignatures[lastIndex]))] = m_funcIndex[funcId];
 			}
-			require(size > 0, "[ERC1538] _delegate address is not a contract and is not address(0)");
+			delete m_funcDelegates[funcId];
+			delete m_funcIndex[funcId];
+			m_funcSignatures.length--;
 		}
-		assembly
+		else if (oldDelegate == address(0))
 		{
-			start := add(signatures, 32)
-			end   := add(start, mload(signatures))
+			m_funcDelegates[funcId] = funcDelegate;
+			m_funcIndex[funcId]     = m_funcSignatures.push(funcSignature);
 		}
-		for (pos = start; pos < end; ++pos)
+		else if (oldDelegate != funcDelegate)
 		{
-			uint256 char;
-			assembly
-			{
-				char := byte(0, mload(pos))
-			}
-			if (char == 0x3B) // 0x3B = ';'
-			{
-				size = (pos - start);
-				assembly
-				{
-					mstore(signatures, size)
-				}
-				bytes4  funcId      = bytes4(keccak256(signatures));
-				address oldDelegate = m_delegates[funcId];
-				if (_delegate == address(0))
-				{
-					uint256 index = m_funcSignatureToIndex[signatures];
-					require(index != 0, "[ERC1538] function does not exist.");
-					index--;
-					uint256 lastIndex = m_funcSignatures.length - 1;
-					if (index != lastIndex)
-					{
-						m_funcSignatures[index] = m_funcSignatures[lastIndex];
-						m_funcSignatureToIndex[m_funcSignatures[lastIndex]] = index + 1;
-					}
-					m_funcSignatures.length--;
-					delete m_funcSignatureToIndex[signatures];
-					delete m_delegates[funcId];
-					emit FunctionUpdate(funcId, oldDelegate, address(0), string(signatures));
-				}
-				else if (m_funcSignatureToIndex[signatures] == 0)
-				{
-					require(oldDelegate == address(0), "[ERC1538] funcId clash.");
-					m_delegates[funcId] = _delegate;
-					m_funcSignatures.push(signatures);
-					m_funcSignatureToIndex[signatures] = m_funcSignatures.length;
-					emit FunctionUpdate(funcId, address(0), _delegate, string(signatures));
-				}
-				else if (m_delegates[funcId] != _delegate)
-				{
-					m_delegates[funcId] = _delegate;
-					emit FunctionUpdate(funcId, oldDelegate, _delegate, string(signatures));
-				}
-				assembly
-				{
-					signatures := add(signatures, add(size, 1))
-				}
-				start = ++pos;
-			}
+			m_funcDelegates[funcId] = funcDelegate;
 		}
-		emit CommitMessage(_commitMessage);
+
+		emit FunctionUpdate(funcId, oldDelegate, funcDelegate, string(funcSignature));
 	}
 }

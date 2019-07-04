@@ -1,9 +1,10 @@
 pragma solidity ^0.5.10;
 
-import "./ERC1538Store.sol";
+import "zos-lib/contracts/upgradeability/Proxy.sol";
+import "./ERC1538.sol";
 
 
-contract ERC1538Proxy is ERC1538Store
+contract ERC1538Proxy is Proxy, ERC1538
 {
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
@@ -11,34 +12,13 @@ contract ERC1538Proxy is ERC1538Store
 	constructor(address _erc1538Delegate)
 	public
 	{
-		transferOwnership(msg.sender);
-
-		//Adding ERC1538 updateContract function
-		bytes memory signature = "updateContract(address,string,string)";
-		bytes4 funcId = bytes4(keccak256(signature));
-		m_delegates[funcId] = _erc1538Delegate;
-		m_funcSignatures.push(signature);
-		m_funcSignatureToIndex[signature] = m_funcSignatures.length;
-		emit FunctionUpdate(funcId, address(0), _erc1538Delegate, string(signature));
+		_transferOwnership(msg.sender);
+		_setFunc("updateContract(address,string,string)", _erc1538Delegate);
 		emit CommitMessage("Added ERC1538 updateContract function at contract creation");
 	}
 
-	function()
-	external
-	payable
+	function _implementation() internal view returns (address)
 	{
-		address delegate = m_delegates[msg.sig];
-		require(delegate != address(0), "Function does not exist.");
-		assembly
-		{
-			let ptr := mload(0x40)
-			calldatacopy(ptr, 0, calldatasize)
-			let result := delegatecall(gas, delegate, ptr, calldatasize, 0, 0)
-			let size := returndatasize
-			returndatacopy(ptr, 0, size)
-			switch result
-			case 0  { revert (ptr, size) }
-			default { return (ptr, size) }
-		}
+		return m_funcDelegates[msg.sig];
 	}
 }

@@ -18,16 +18,17 @@
   },
   "files": [
     "/contracts",
-		"/build",
+    "/build",
     "/utils"
   ],
   "author": "iExec",
   "license": "ISC",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "devDependencies": {
-    "ganache-cli": "^6.2.4",
+    "ganache-cli": "^6.4.4",
     "openzeppelin-solidity": "^2.3.0",
-    "openzeppelin-test-helpers": "^0.1.2",
-    "truffle": "^5.0.0"
+    "openzeppelin-test-helpers": "^0.1.5",
+    "truffle": "^5.0.26",
+    "zos-lib": "^2.4.1"
   }
 }

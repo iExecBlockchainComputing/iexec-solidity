@@ -4,7 +4,7 @@ import "zos-lib/contracts/upgradeability/Proxy.sol";
 import "./ERC1538.sol";
 
 
-contract ERC1538Proxy is Proxy, ERC1538
+contract ERC1538Proxy is ERC1538, Proxy
 {
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);

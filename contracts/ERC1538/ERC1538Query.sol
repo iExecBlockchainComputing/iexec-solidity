@@ -65,7 +65,7 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 			bytes memory signature = m_funcSignatures[i];
 			for (uint256 c = 0; c < signature.length; ++c)
 			{
-				signatures[charPos] = signature[i];
+				signatures[charPos] = signature[c];
 				++charPos;
 			}
 			signatures[charPos] = 0x3B;
@@ -100,7 +100,7 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 			bytes memory signature = delegateSignatures[i];
 			for (uint256 c = 0; c < signature.length; ++c)
 			{
-				signatures[charPos] = signature[i];
+				signatures[charPos] = signature[c];
 				++charPos;
 			}
 			signatures[charPos] = 0x3B;

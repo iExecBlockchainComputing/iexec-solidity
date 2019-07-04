@@ -19,7 +19,6 @@ contract ERC1538UpdateDelegate is ERC1538Update, ERC1538
 	{
 		bytes memory signatures = bytes(_functionSignatures);
 		uint256 start;
-		uint256 pos;
 		uint256 end;
 		uint256 size;
 
@@ -33,18 +32,18 @@ contract ERC1538UpdateDelegate is ERC1538Update, ERC1538
 			start := add(signatures, 32)
 			end   := add(start, mload(signatures))
 		}
-		for (pos = start; pos < end; ++pos)
+		for (uint256 pos = start; pos < end; ++pos)
 		{
 			uint256 char;
 			assembly { char := byte(0, mload(pos)) }
 			if (char == 0x3B) // 0x3B = ';'
 			{
-				size = (pos - start);
-				assembly { mstore(signatures, size) }
+				uint256 length = (pos - start);
+				assembly { mstore(signatures, length) }
 
 				_setFunc(signatures, _delegate);
 
-				assembly { signatures := add(signatures, add(size, 1)) }
+				assembly { signatures := add(signatures, add(length, 1)) }
 				start = ++pos;
 			}
 		}

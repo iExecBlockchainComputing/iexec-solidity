@@ -7,6 +7,12 @@ contract ERC1538 is ERC1538Store
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
 
+	constructor()
+	public
+	{
+		renounceOwnership();
+	}
+
 	function _setFunc(bytes memory funcSignature, address funcDelegate)
 	internal
 	{

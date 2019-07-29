@@ -1,8 +1,9 @@
 var ERC1538Proxy  = artifacts.require("./ERC1538Proxy");
 var ERC1538Update = artifacts.require("./ERC1538UpdateDelegate");
 var ERC1538Query  = artifacts.require("./ERC1538QueryDelegate");
+var TestContract  = artifacts.require("./TestContract");
 
-const { shouldFail } = require('openzeppelin-test-helpers');
+const { expectRevert } = require('openzeppelin-test-helpers');
 
 function getSerializedObject(entry)
 {
@@ -149,6 +150,12 @@ contract('ERC1538', async (accounts) => {
 			(await QueryInterface.delegateAddresses()),
 			Object.values(SIGNATURES).filter((v, i, a) => a.indexOf(v) === i)
 		);
+	});
+
+	it("ERC1538 - fallback", async () => {
+		TestContractInstance  = await TestContract.new();
+		await UpdateInterface.updateContract(TestContractInstance.address, "fallback;", "adding fallback delegate");
+		await expectRevert(web3.eth.sendTransaction({ from: accounts[0], to: TestContractInstance.address, value: 0, gasLimit: 500000 }), "fallback should revert");
 	});
 
 });

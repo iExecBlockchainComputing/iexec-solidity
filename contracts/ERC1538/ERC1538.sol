@@ -4,6 +4,8 @@ import "./ERC1538Store.sol";
 
 contract ERC1538 is ERC1538Store
 {
+	bytes4 constant internal FALLBACK = bytes4(keccak256("fallback"));
+
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
 
@@ -18,6 +20,11 @@ contract ERC1538 is ERC1538Store
 	{
 		bytes4  funcId      = bytes4(keccak256(funcSignature));
 		address oldDelegate = m_funcDelegates[funcId];
+
+		if (funcId == FALLBACK)
+		{
+			funcId = bytes4(0);
+		}
 
 		if (funcDelegate == address(0))
 		{

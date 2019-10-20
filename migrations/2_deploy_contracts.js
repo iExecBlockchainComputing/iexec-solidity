@@ -1,6 +1,3 @@
-var ECDSALib = artifacts.require("./ECDSALib.sol");
-var Identity = artifacts.require("./Identity.sol");
-
 module.exports = async function(deployer, network, accounts)
 {
 	console.log("# web3 version:", web3.version);
@@ -8,7 +5,4 @@ module.exports = async function(deployer, network, accounts)
 	chaintype = await web3.eth.net.getNetworkType()
 	console.log("Chainid is:", chainid);
 	console.log("Chaintype is:", chaintype);
-
-	await deployer.deploy(ECDSALib);
-	await deployer.link(ECDSALib, Identity);
 };

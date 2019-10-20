@@ -25,6 +25,8 @@
   "license": "ISC",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "dependencies": {
+    "@ensdomains/ens": "^0.3.11",
+    "@ensdomains/resolver": "^0.1.10",
     "openzeppelin-solidity": "^2.3.0",
     "zos-lib": "^2.4.2"
   },

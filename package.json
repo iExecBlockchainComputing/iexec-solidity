@@ -28,6 +28,7 @@
     "@ensdomains/ens": "^0.3.11",
     "@ensdomains/resolver": "^0.1.10",
     "openzeppelin-solidity": "^2.3.0",
+    "solstruct": "0.0.5",
     "zos-lib": "^2.4.2"
   },
   "devDependencies": {

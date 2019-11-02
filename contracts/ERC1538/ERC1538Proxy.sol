@@ -19,6 +19,6 @@ contract ERC1538Proxy is ERC1538, Proxy
 
 	function _implementation() internal view returns (address)
 	{
-		return m_funcDelegates[msg.sig];
+		return m_funcDelegates.value(msg.sig);
 	}
 }

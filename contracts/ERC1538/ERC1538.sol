@@ -15,27 +15,25 @@ contract ERC1538 is ERC1538Store
 		renounceOwnership();
 	}
 
-	function _setFunc(bytes memory funcSignature, address funcDelegate)
+	function _setFunc(string memory funcSignature, address funcDelegate)
 	internal
 	{
-		bytes4 funcId = bytes4(keccak256(funcSignature));
+		bytes4 funcId = bytes4(keccak256(bytes(funcSignature)));
 		if (funcId == FALLBACK)
 		{
 			funcId = bytes4(0);
 		}
 
-		address oldDelegate = m_funcDelegates.value(funcId);
+		address oldDelegate = m_funcs.value1(funcId);
 		if (funcDelegate == address(0))
 		{
-			m_funcDelegates.remove(funcId);
-			delete m_funcSignatures[funcId];
+			m_funcs.remove(funcId);
 		}
 		else
 		{
-			m_funcDelegates.set(funcId, funcDelegate);
-			m_funcSignatures[funcId] = funcSignature;
+			m_funcs.set(funcId, funcDelegate, bytes(funcSignature));
 		}
 
-		emit FunctionUpdate(funcId, oldDelegate, funcDelegate, string(funcSignature));
+		emit FunctionUpdate(funcId, oldDelegate, funcDelegate, funcSignature);
 	}
 }

@@ -20,48 +20,49 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	function totalFunctions()
 	external view returns(uint256)
 	{
-		return m_funcDelegates.length();
+		return m_funcs.length();
 	}
 
 	function functionByIndex(uint256 _index)
 	external view returns(string memory signature, bytes4 id, address delegate)
 	{
-		(bytes4 funcId, address funcDelegate) = m_funcDelegates.entryAt(_index + 1);
-		return (string(m_funcSignatures[funcId]), funcId, funcDelegate);
+		(bytes4 funcId, address funcDelegate, bytes memory funcSignature) = m_funcs.entryAt(_index + 1);
+		return (string(funcSignature), funcId, funcDelegate);
 	}
 
 	function functionById(bytes4 _funcId)
 	external view returns(string memory signature, bytes4 id, address delegate)
 	{
-		return (string(m_funcSignatures[_funcId]), _funcId, m_funcDelegates.value(_funcId));
+		(address funcDelegate, bytes memory funcSignature) = m_funcs.value(_funcId);
+		return (string(funcSignature), _funcId, funcDelegate);
 	}
 
 	function functionExists(string calldata _funcSignature)
 	external view returns(bool)
 	{
-		return m_funcDelegates.contains(bytes4(keccak256(bytes(_funcSignature))));
+		return m_funcs.contains(bytes4(keccak256(bytes(_funcSignature))));
 	}
 
 	function delegateAddress(string calldata _funcSignature)
 	external view returns(address)
 	{
-		return m_funcDelegates.value(bytes4(keccak256(bytes(_funcSignature))));
+		return m_funcs.value1(bytes4(keccak256(bytes(_funcSignature))));
 	}
 
 	function functionSignatures()
 	external view returns(string memory)
 	{
 		uint256 signaturesLength = 0;
-		for (uint256 i = 1; i <= m_funcDelegates.length(); ++i)
+		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			signaturesLength += m_funcSignatures[m_funcDelegates.at(i)].length + 1; // EDIT
+			signaturesLength += m_funcs.value2(m_funcs.at(i)).length + 1; // EDIT
 		}
 
 		bytes memory signatures = new bytes(signaturesLength);
 		uint256 charPos = 0;
-		for (uint256 i = 1; i <= m_funcDelegates.length(); ++i)
+		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			bytes memory signature = m_funcSignatures[m_funcDelegates.at(i)];
+			bytes memory signature = m_funcs.value2(m_funcs.at(i));
 			for (uint256 c = 0; c < signature.length; ++c)
 			{
 				signatures[charPos] = signature[c];
@@ -77,16 +78,15 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	function delegateFunctionSignatures(address _delegate)
 	external view returns(string memory)
 	{
-		bytes[] memory delegateSignatures = new bytes[](m_funcDelegates.length());
+		bytes[] memory delegateSignatures = new bytes[](m_funcs.length());
 		uint256 delegateSignaturesLength = 0;
 
 		uint256 signaturesLength = 0;
-		for (uint256 i = 1; i <= m_funcDelegates.length(); ++i)
+		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			(bytes4 funcId, address entryAddress) = m_funcDelegates.entryAt(i);
+			(, address entryAddress, bytes memory signature) = m_funcs.entryAt(i);
 			if (_delegate == entryAddress)
 			{
-				bytes memory signature = m_funcSignatures[funcId];
 				signaturesLength += signature.length + 1;
 				delegateSignatures[delegateSignaturesLength] = signature;
 				++delegateSignaturesLength;
@@ -113,12 +113,12 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	function delegateAddresses()
 	external view returns(address[] memory)
 	{
-		address[] memory delegatesBucket = new address[](m_funcDelegates.length());
+		address[] memory delegatesBucket = new address[](m_funcs.length());
 
 		uint256 numDelegates = 0;
-		for (uint256 i = 1; i <= m_funcDelegates.length(); ++i)
+		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			(, address delegate) = m_funcDelegates.entryAt(i);
+			address delegate = m_funcs.value1(m_funcs.at(i));
 			bool seen = false;
 			for (uint256 j = 0; j < numDelegates; ++j)
 			{

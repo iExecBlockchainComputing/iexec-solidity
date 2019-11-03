@@ -4,9 +4,8 @@
   "description": "",
   "main": "truffle.js",
   "scripts": {
+    "build": "./node_modules/.bin/truffle compile",
     "test": "./node_modules/.bin/truffle test",
-    "pretest": "./node_modules/.bin/testrpc > /dev/null &",
-    "posttest": "kill $(ps aux | grep testrpc |grep node|awk '{print $2}')",
     "coverage": "./node_modules/.bin/solidity-coverage"
   },
   "repository": {
@@ -28,7 +27,7 @@
     "@ensdomains/ens": "^0.3.11",
     "@ensdomains/resolver": "^0.1.10",
     "openzeppelin-solidity": "^2.3.0",
-    "solstruct": "0.0.5",
+    "solstruct": "^0.0.7",
     "zos-lib": "^2.4.2"
   },
   "devDependencies": {

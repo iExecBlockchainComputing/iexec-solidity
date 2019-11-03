@@ -41,7 +41,7 @@ contract ERC1538UpdateDelegate is ERC1538Update, ERC1538
 				uint256 length = (pos - start);
 				assembly { mstore(signatures, length) }
 
-				_setFunc(signatures, _delegate);
+				_setFunc(string(signatures), _delegate);
 
 				assembly { signatures := add(signatures, add(length, 1)) }
 				start = ++pos;

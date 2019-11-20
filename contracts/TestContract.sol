@@ -2,6 +2,7 @@ pragma solidity ^0.5.0;
 
 contract TestContract
 {
+	string  public constant id = "TestContract";
 	address public caller;
 	bytes   public value;
 

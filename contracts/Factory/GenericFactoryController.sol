@@ -21,7 +21,7 @@ contract GenericFactoryController is Ownable
 			lastUse     [msg.sender] = _today();
 			lastUseCount[msg.sender] = 0;
 		}
-		require(lastUseCount[msg.sender] < dailyLimit[msg.sender]);
+		require(lastUseCount[msg.sender] < dailyLimit[msg.sender], "daily-limit-exceeded");
 		lastUseCount[msg.sender] += 1;
 		_;
 	}

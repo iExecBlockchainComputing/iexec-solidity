@@ -6,7 +6,6 @@ import "./GenericFactory.sol";
 
 contract GenericFactoryRestricted is GenericFactory, WhitelistedRole
 {
-
 	constructor(address _minter)
 	public
 	{

@@ -16,7 +16,7 @@ contract('GenericFactoryRestricted', async (accounts) => {
 	before("configure", async () => {
 		GenericFactoryRestrictedInstance = await GenericFactoryRestricted.new(accounts[0]);
 		GenericFactoryControllerInstance = await GenericFactoryController.new(GenericFactoryRestrictedInstance.address);
-		GenericFactoryRestrictedInstance.addMinter(GenericFactoryControllerInstance.address);
+		GenericFactoryRestrictedInstance.addWhitelisted(GenericFactoryControllerInstance.address);
 	});
 
 	it("setup check", async () => {

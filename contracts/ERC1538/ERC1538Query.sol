@@ -26,15 +26,14 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	function functionByIndex(uint256 _index)
 	external view returns(string memory signature, bytes4 id, address delegate)
 	{
-		(bytes4 funcId, address funcDelegate, bytes memory funcSignature) = m_funcs.entryAt(_index + 1);
+		(bytes4 funcId, address funcDelegate, bytes memory funcSignature) = m_funcs.at(_index + 1);
 		return (string(funcSignature), funcId, funcDelegate);
 	}
 
 	function functionById(bytes4 _funcId)
 	external view returns(string memory signature, bytes4 id, address delegate)
 	{
-		(address funcDelegate, bytes memory funcSignature) = m_funcs.value(_funcId);
-		return (string(funcSignature), _funcId, funcDelegate);
+		return (string(m_funcs.value2(_funcId)), _funcId, m_funcs.value1(_funcId));
 	}
 
 	function functionExists(string calldata _funcSignature)
@@ -55,14 +54,14 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 		uint256 signaturesLength = 0;
 		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			signaturesLength += m_funcs.value2(m_funcs.at(i)).length + 1; // EDIT
+			signaturesLength += m_funcs.value2(m_funcs.keyAt(i)).length + 1; // EDIT
 		}
 
 		bytes memory signatures = new bytes(signaturesLength);
 		uint256 charPos = 0;
 		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			bytes memory signature = m_funcs.value2(m_funcs.at(i));
+			bytes memory signature = m_funcs.value2(m_funcs.keyAt(i));
 			for (uint256 c = 0; c < signature.length; ++c)
 			{
 				signatures[charPos] = signature[c];
@@ -84,11 +83,11 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 		uint256 signaturesLength = 0;
 		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			(, address entryAddress, bytes memory signature) = m_funcs.entryAt(i);
-			if (_delegate == entryAddress)
+			(bytes4 funcId, address funcDelegate, bytes memory funcSignature) = m_funcs.at(i);
+			if (_delegate == funcDelegate)
 			{
-				signaturesLength += signature.length + 1;
-				delegateSignatures[delegateSignaturesLength] = signature;
+				signaturesLength += funcSignature.length + 1;
+				delegateSignatures[delegateSignaturesLength] = funcSignature;
 				++delegateSignaturesLength;
 			}
 		}
@@ -118,7 +117,7 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 		uint256 numDelegates = 0;
 		for (uint256 i = 1; i <= m_funcs.length(); ++i)
 		{
-			address delegate = m_funcs.value1(m_funcs.at(i));
+			address delegate = m_funcs.value1(m_funcs.keyAt(i));
 			bool seen = false;
 			for (uint256 j = 0; j < numDelegates; ++j)
 			{

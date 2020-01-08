@@ -1,7 +1,7 @@
 var GenericFactory = artifacts.require("GenericFactory");
 var TestContract   = artifacts.require("TestContract");
 
-const { expectRevert } = require('openzeppelin-test-helpers');
+const { expectRevert } = require('@openzeppelin/test-helpers');
 
 function extractEvents(txMined, address, name)
 {

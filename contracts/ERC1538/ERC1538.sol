@@ -27,7 +27,7 @@ contract ERC1538 is ERC1538Store
 		address oldDelegate = m_funcs.value1(funcId);
 		if (funcDelegate == address(0))
 		{
-			m_funcs.remove(funcId);
+			m_funcs.del(funcId);
 		}
 		else
 		{

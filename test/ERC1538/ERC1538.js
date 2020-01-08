@@ -3,7 +3,7 @@ var ERC1538Update = artifacts.require("./ERC1538UpdateDelegate");
 var ERC1538Query  = artifacts.require("./ERC1538QueryDelegate");
 var TestContract  = artifacts.require("./TestContract");
 
-const { expectRevert } = require('openzeppelin-test-helpers');
+const { expectRevert } = require('@openzeppelin/test-helpers');
 
 function getSerializedObject(entry)
 {
@@ -51,9 +51,9 @@ contract('ERC1538', async (accounts) => {
 
 		SIGNATURES = {
 			'updateContract(address,string,string)': ERC1538UpdateInstance.address,
-			'renounceOwnership()':                   ERC1538QueryInstance.address,
-			'owner()':                               ERC1538QueryInstance.address,
 			'isOwner()':                             ERC1538QueryInstance.address,
+			'owner()':                               ERC1538QueryInstance.address,
+			'renounceOwnership()':                   ERC1538QueryInstance.address,
 			'transferOwnership(address)':            ERC1538QueryInstance.address,
 			'totalFunctions()':                      ERC1538QueryInstance.address,
 			'functionByIndex(uint256)':              ERC1538QueryInstance.address,

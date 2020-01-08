@@ -2,7 +2,7 @@ var GenericFactoryRestricted = artifacts.require("GenericFactoryRestricted");
 var GenericFactoryController = artifacts.require("GenericFactoryController");
 var TestContract             = artifacts.require("TestContract");
 
-const { expectRevert } = require('openzeppelin-test-helpers');
+const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const LIMIT = 3;
 

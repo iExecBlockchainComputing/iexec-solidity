@@ -31,9 +31,9 @@
     "zos-lib": "2.4.2"
   },
   "devDependencies": {
-    "@openzeppelin/test-helpers": "^0.5.4",
+    "@openzeppelin/test-helpers": "0.5.4",
     "chai": "4.2.0",
-    "ganache-cli": "^6.8.1",
-    "truffle": "^5.1.7"
+    "ganache-cli": "6.8.1",
+    "truffle": "5.1.7"
   }
 }

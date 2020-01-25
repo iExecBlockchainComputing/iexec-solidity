@@ -1,7 +1,6 @@
 function prepareSalt(salt, call="")
 {
 	return web3.utils.soliditySha3(
-		{ t: 'bytes1',  v: '0xff' },
 		{ t: 'bytes32', v: salt   },
 		{ t: 'bytes',   v: call   },
 	);

@@ -2,6 +2,7 @@ var GenericFactoryRestricted = artifacts.require("GenericFactoryRestricted");
 var TestContract             = artifacts.require("TestContract");
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
+const { predict } = require('./predict.js');
 
 function extractEvents(txMined, address, name)
 {
@@ -26,12 +27,7 @@ contract('GenericFactoryRestricted', async (accounts) => {
 		});
 
 		it("predict address", async () => {
-			predictedAddress = web3.utils.toChecksumAddress(web3.utils.soliditySha3(
-				{ t: 'bytes1',  v: '0xff'                                   },
-				{ t: 'address', v: GenericFactoryRestrictedInstance.address },
-				{ t: 'bytes32', v: salt                                     },
-				{ t: 'bytes32', v: web3.utils.keccak256(code)               },
-			).slice(26));
+			predictedAddress = predict(GenericFactoryRestrictedInstance.address, code, salt);
 			assert.equal(await GenericFactoryRestrictedInstance.predictAddress(code, salt), predictedAddress);
 		});
 

@@ -2,6 +2,7 @@ var GenericFactory = artifacts.require("GenericFactory");
 var TestContract   = artifacts.require("TestContract");
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
+const { predict } = require('./predict.js');
 
 function extractEvents(txMined, address, name)
 {
@@ -26,12 +27,7 @@ contract('GenericFactory', async (accounts) => {
 		});
 
 		it("predict address", async () => {
-			predictedAddress = web3.utils.toChecksumAddress(web3.utils.soliditySha3(
-				{ t: 'bytes1',  v: '0xff'                         },
-				{ t: 'address', v: GenericFactoryInstance.address },
-				{ t: 'bytes32', v: salt                           },
-				{ t: 'bytes32', v: web3.utils.keccak256(code)     },
-			).slice(26));
+			predictedAddress = predict(GenericFactoryInstance.address, code, salt);
 			assert.equal(await GenericFactoryInstance.predictAddress(code, salt), predictedAddress);
 		});
 
@@ -54,7 +50,7 @@ contract('GenericFactory', async (accounts) => {
 
 	});
 
-	describe("createContractAndCallback", async () => {
+	describe("createContractAndCall", async () => {
 
 		code = new web3.eth.Contract(TestContract.abi).deploy({
 			data: TestContract.bytecode,
@@ -62,33 +58,24 @@ contract('GenericFactory', async (accounts) => {
 		}).encodeABI();
 
 		it("select random salt and value", async () => {
-			salt     = web3.utils.randomHex(32);
-			value    = web3.utils.randomHex(64);
-			callback = web3.eth.abi.encodeFunctionCall({ name: 'set', type: 'function', inputs: [{ type: 'bytes', name: '_value' }] }, [ value ]);
+			salt  = web3.utils.randomHex(32);
+			value = web3.utils.randomHex(64);
+			call  = web3.eth.abi.encodeFunctionCall({ name: 'set', type: 'function', inputs: [{ type: 'bytes', name: '_value' }] }, [ value ]);
 		});
 
 		it("predict address", async () => {
-			predictedAddress = web3.utils.toChecksumAddress(web3.utils.soliditySha3(
-				{ t: 'bytes1',  v: '0xff'                         },
-				{ t: 'address', v: GenericFactoryInstance.address },
-				{ t: 'bytes32', v: salt                           },
-				{ t: 'bytes32', v: web3.utils.keccak256(code)     },
-			).slice(26));
-			assert.equal(await GenericFactoryInstance.predictAddress(code, salt), predictedAddress);
+			predictedAddress = predict(GenericFactoryInstance.address, code, salt, call);
+			assert.equal(await GenericFactoryInstance.predictAddressWithCall(code, salt, call), predictedAddress);
 		});
 
 		it("success (first)", async () => {
-			txMined = await GenericFactoryInstance.createContractAndCallback(code, salt, callback);
+			txMined = await GenericFactoryInstance.createContractAndCall(code, salt, call);
 			events = extractEvents(txMined, GenericFactoryInstance.address, "NewContract");
 			assert.equal(events[0].args.addr, predictedAddress);
 		});
 
-		it("failure (duplicate - with callback)", async () => {
-			await expectRevert.unspecified(GenericFactoryInstance.createContractAndCallback(code, salt, callback));
-		});
-
-		it("failure (duplicate - without callback)", async () => {
-			await expectRevert.unspecified(GenericFactoryInstance.createContract(code, salt));
+		it("failure (duplicate)", async () => {
+			await expectRevert.unspecified(GenericFactoryInstance.createContractAndCall(code, salt, call));
 		});
 
 		it("post check", async () => {
@@ -99,7 +86,4 @@ contract('GenericFactory', async (accounts) => {
 		});
 
 	});
-
-
-
 });

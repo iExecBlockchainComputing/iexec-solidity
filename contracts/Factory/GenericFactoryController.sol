@@ -50,10 +50,10 @@ contract GenericFactoryController is Ownable
 		return factory.createContract(_code, _salt);
 	}
 
-	function createContractAndCallback(bytes memory _code, bytes32 _salt, bytes memory _callback)
+	function createContractAndCall(bytes memory _code, bytes32 _salt, bytes memory _call)
 	public limited() returns (address)
 	{
-		return factory.createContractAndCallback(_code, _salt, _callback);
+		return factory.createContractAndCall(_code, _salt, _call);
 	}
 
 	/**

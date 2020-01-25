@@ -3,6 +3,7 @@ var GenericFactoryController = artifacts.require("GenericFactoryController");
 var TestContract             = artifacts.require("TestContract");
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
+const { predict } = require('./predict.js');
 
 const LIMIT = 3;
 

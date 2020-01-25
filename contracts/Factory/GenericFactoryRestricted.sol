@@ -22,9 +22,9 @@ contract GenericFactoryRestricted is GenericFactory, WhitelistedRole
 		return super.createContract(_code, _salt);
 	}
 
-	function createContractAndCallback(bytes memory _code, bytes32 _salt, bytes memory _callback)
+	function createContractAndCall(bytes memory _code, bytes32 _salt, bytes memory _call)
 	public onlyWhitelisted() returns(address)
 	{
-		return super.createContractAndCallback(_code, _salt, _callback);
+		return super.createContractAndCall(_code, _salt, _call);
 	}
 }

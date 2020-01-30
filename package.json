@@ -1,5 +1,5 @@
 {
-  "name": "iexec-solidity",
+  "name": "@iexec/solidity",
   "version": "0.0.24",
   "description": "",
   "main": "truffle.js",

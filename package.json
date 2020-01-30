@@ -25,7 +25,7 @@
   "license": "ISC",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "dependencies": {
-    "@ensdomains/ens": "0.3.11",
+    "@ensdomains/ens": "0.4.0",
     "@ensdomains/resolver": "0.1.13",
     "@openzeppelin/contracts": "2.4.0",
     "solstruct": "0.0.8",

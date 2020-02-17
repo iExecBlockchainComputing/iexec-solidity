@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-import "./Proxy.sol";
+import "../Upgradeability/Proxy.sol";
 import "./ERC1538.sol";
 
 

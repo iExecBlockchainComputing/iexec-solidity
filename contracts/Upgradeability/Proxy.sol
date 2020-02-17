@@ -9,17 +9,25 @@ pragma solidity ^0.6.0;
  */
 abstract contract Proxy {
   /**
-   * @dev Fallback function.
+   * @dev Receive function.
    * Implemented entirely in `_fallback`.
    */
-  fallback() payable external {
+  receive() external payable {
     _fallback();
   }
 
   /**
-   * @return The Address of the implementation.
+   * @dev Fallback function.
+   * Implemented entirely in `_fallback`.
    */
-  function _implementation() internal virtual view returns (address);
+  fallback() external payable {
+    _fallback();
+  }
+
+  /**
+   * @return impl The Address of the implementation.
+   */
+  function _implementation() internal virtual view returns (address impl);
 
   /**
    * @dev Delegates execution to an implementation contract.

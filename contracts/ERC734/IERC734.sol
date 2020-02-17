@@ -1,6 +1,6 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
-contract IERC734
+abstract contract IERC734
 {
 	// 1: MANAGEMENT keys, which can manage the identity
 	uint256 public constant MANAGEMENT_KEY = 1;
@@ -25,11 +25,11 @@ contract IERC734
 	event Approved          (uint256 indexed executionId, bool approved);
 
 	// Functions
-	function getKey          (bytes32 _key                                     ) external view returns (uint256[] memory purposes, uint256 keyType, bytes32 key);
-	function keyHasPurpose   (bytes32 _key, uint256 purpose                    ) external view returns (bool exists);
-	function getKeysByPurpose(uint256 _purpose                                 ) external view returns (bytes32[] memory keys);
-	function addKey          (bytes32 _key, uint256 _purpose, uint256 _keyType ) external      returns (bool success);
-	function removeKey       (bytes32 _key, uint256 _purpose                   ) external      returns (bool success);
-	function execute         (address _to, uint256 _value, bytes calldata _data) external      returns (uint256 executionId);
-	function approve         (uint256 _id, bool _approve                       ) external      returns (bool success);
+	function getKey          (bytes32 _key                                     ) external virtual view returns (uint256[] memory purposes, uint256 keyType, bytes32 key);
+	function keyHasPurpose   (bytes32 _key, uint256 purpose                    ) external virtual view returns (bool exists);
+	function getKeysByPurpose(uint256 _purpose                                 ) external virtual view returns (bytes32[] memory keys);
+	function addKey          (bytes32 _key, uint256 _purpose, uint256 _keyType ) external virtual      returns (bool success);
+	function removeKey       (bytes32 _key, uint256 _purpose                   ) external virtual      returns (bool success);
+	function execute         (address _to, uint256 _value, bytes calldata _data) external virtual      returns (uint256 executionId);
+	function approve         (uint256 _id, bool _approve                       ) external virtual      returns (bool success);
 }

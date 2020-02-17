@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
 contract TestContract
 {
@@ -6,7 +6,7 @@ contract TestContract
 	address public caller;
 	bytes   public value;
 
-	function () external payable
+	fallback() external payable
 	{
 		revert("fallback should revert");
 	}

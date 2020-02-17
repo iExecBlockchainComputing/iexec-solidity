@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
 import "./ERC1538.sol";
 
@@ -18,38 +18,38 @@ interface ERC1538Query
 contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 {
 	function totalFunctions()
-	external view returns(uint256)
+	external override view returns(uint256)
 	{
 		return m_funcs.length();
 	}
 
 	function functionByIndex(uint256 _index)
-	external view returns(string memory signature, bytes4 id, address delegate)
+	external override view returns(string memory signature, bytes4 id, address delegate)
 	{
 		(bytes4 funcId, address funcDelegate, bytes memory funcSignature) = m_funcs.at(_index + 1);
 		return (string(funcSignature), funcId, funcDelegate);
 	}
 
 	function functionById(bytes4 _funcId)
-	external view returns(string memory signature, bytes4 id, address delegate)
+	external override view returns(string memory signature, bytes4 id, address delegate)
 	{
 		return (string(m_funcs.value2(_funcId)), _funcId, m_funcs.value1(_funcId));
 	}
 
 	function functionExists(string calldata _funcSignature)
-	external view returns(bool)
+	external override view returns(bool)
 	{
 		return m_funcs.contains(bytes4(keccak256(bytes(_funcSignature))));
 	}
 
 	function delegateAddress(string calldata _funcSignature)
-	external view returns(address)
+	external override view returns(address)
 	{
 		return m_funcs.value1(bytes4(keccak256(bytes(_funcSignature))));
 	}
 
 	function functionSignatures()
-	external view returns(string memory)
+	external override view returns(string memory)
 	{
 		uint256 signaturesLength = 0;
 		for (uint256 i = 1; i <= m_funcs.length(); ++i)
@@ -75,7 +75,7 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	}
 
 	function delegateFunctionSignatures(address _delegate)
-	external view returns(string memory)
+	external override view returns(string memory)
 	{
 		bytes[] memory delegateSignatures = new bytes[](m_funcs.length());
 		uint256 delegateSignaturesLength = 0;
@@ -110,7 +110,7 @@ contract ERC1538QueryDelegate is ERC1538Query, ERC1538
 	}
 
 	function delegateAddresses()
-	external view returns(address[] memory)
+	external override view returns(address[] memory)
 	{
 		address[] memory delegatesBucket = new address[](m_funcs.length());
 

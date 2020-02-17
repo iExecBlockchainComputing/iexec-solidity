@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
 library ECDSALib
@@ -23,13 +23,30 @@ library ECDSALib
 		bytes32 r;
 		bytes32 s;
 		uint8   v;
-		require(sign.length == 65);
-		assembly
+
+		if (sign.length == 65) // 65bytes: (r,s,v) form
 		{
-			r :=         mload(add(sign, 0x20))
-			s :=         mload(add(sign, 0x40))
-			v := byte(0, mload(add(sign, 0x60)))
+			assembly
+			{
+				r :=         mload(add(sign, 0x20))
+				s :=         mload(add(sign, 0x40))
+				v := byte(0, mload(add(sign, 0x60)))
+			}
 		}
+		else if (sign.length == 64) // 64bytes: (r,vs) form → see EIP2098
+		{
+			assembly
+			{
+				r :=                mload(add(sign, 0x20))
+				s := and(           mload(add(sign, 0x40)), 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+				v := shr(7, byte(0, mload(add(sign, 0x40))))
+			}
+		}
+		else
+		{
+			revert("invalid-signature-format");
+		}
+
 		if (v < 27) v += 27;
 		require(v == 27 || v == 28);
 		return ecrecover(hash, v, r, s);

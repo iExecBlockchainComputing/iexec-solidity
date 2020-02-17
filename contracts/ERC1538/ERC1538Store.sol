@@ -1,4 +1,4 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "solstruct/contracts/libs/LibMap2.bytes4.address.bytes.sol";

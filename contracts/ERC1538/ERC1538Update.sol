@@ -1,4 +1,4 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.6.0;
 
 import "./ERC1538.sol";
 
@@ -15,7 +15,7 @@ contract ERC1538UpdateDelegate is ERC1538Update, ERC1538
 		string calldata _functionSignatures,
 		string calldata _commitMessage
 	)
-	external onlyOwner
+	external override onlyOwner
 	{
 		bytes memory signatures = bytes(_functionSignatures);
 		uint256 start;

@@ -1,6 +1,6 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.6.0;
 
-import "zos-lib/contracts/upgradeability/Proxy.sol";
+import "./Proxy.sol";
 import "./ERC1538.sol";
 
 
@@ -17,7 +17,7 @@ contract ERC1538Proxy is ERC1538, Proxy
 		emit CommitMessage("Added ERC1538 updateContract function at contract creation");
 	}
 
-	function _implementation() internal view returns (address)
+	function _implementation() internal override view returns (address)
 	{
 		return m_funcs.value1(msg.sig);
 	}

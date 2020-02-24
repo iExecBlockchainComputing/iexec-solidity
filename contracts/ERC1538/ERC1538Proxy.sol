@@ -19,6 +19,8 @@ contract ERC1538Proxy is ERC1538, Proxy
 
 	function _implementation() internal override view returns (address)
 	{
-		return m_funcs.value1(msg.sig);
+		address delegateFunc = m_funcs.value1(msg.sig);
+		address fallbackFunc = m_funcs.value1(0xFFFFFFFF);
+		return delegateFunc != address(0) ? delegateFunc : fallbackFunc;
 	}
 }

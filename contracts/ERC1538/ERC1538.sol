@@ -24,11 +24,16 @@ contract ERC1538 is ERC1538Store
 		if (funcId == FALLBACK) { funcId = bytes4(0xFFFFFFFF); }
 
 		address oldDelegate = m_funcs.value1(funcId);
-		if (funcDelegate == address(0))
+
+		if (funcDelegate == oldDelegate) // No change → skip
+		{
+			return;
+		}
+		else if (funcDelegate == address(0)) // Delete
 		{
 			m_funcs.del(funcId);
 		}
-		else
+		else // Set / Update
 		{
 			m_funcs.set(funcId, funcDelegate, bytes(funcSignature));
 		}

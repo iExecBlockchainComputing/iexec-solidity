@@ -1,8 +1,9 @@
 pragma solidity ^0.6.0;
 
+import "./IERC1538.sol";
 import "./ERC1538Store.sol";
 
-contract ERC1538 is ERC1538Store
+contract ERC1538 is IERC1538, ERC1538Store
 {
 	bytes4 constant internal RECEIVE  = bytes4(keccak256("receive"));
 	bytes4 constant internal FALLBACK = bytes4(keccak256("fallback"));

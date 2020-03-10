@@ -7,6 +7,8 @@ import "./ECDSA.sol";
 
 contract SignatureVerifier is ECDSA
 {
+	bytes4 constant internal MAGICVALUE = 0x20c13b0b;
+
 	function _isContract(address _addr)
 	internal view returns (bool)
 	{
@@ -32,7 +34,7 @@ contract SignatureVerifier is ECDSA
 	{
 		if (_isContract(_identity))
 		{
-			return IERC1271(_identity).isValidSignature(_hash, _signature);
+			return IERC1271(_identity).isValidSignature(_hash, _signature) == MAGICVALUE;
 		}
 		else
 		{

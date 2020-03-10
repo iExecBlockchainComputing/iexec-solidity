@@ -26,5 +26,5 @@ abstract contract IERC1271
 		bytes32 _data,
 		bytes memory _signature
 	)
-	public virtual view returns (bool isValid);
+	public virtual view returns (bytes4);
 }

@@ -26,7 +26,7 @@
   "dependencies": {
     "@ensdomains/ens": "0.4.4",
     "@ensdomains/resolver": "0.2.4",
-    "@openzeppelin/contracts": "3.0.0-beta.0",
+    "@openzeppelin/contracts": "^3.0.0-rc.0",
     "solstruct": "0.0.13",
     "zos-lib": "2.4.3"
   },

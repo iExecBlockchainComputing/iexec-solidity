@@ -6,6 +6,7 @@
   "scripts": {
     "build": "truffle compile --",
     "test": "truffle test --",
+		"autotest": "./autotest.sh --",
     "coverage": "truffle run coverage --"
   },
   "repository": {

@@ -21,6 +21,7 @@ function getFunctionSignatures(abi)
 {
 	return abi
 		.filter(entry => entry.type == 'function')
+		.filter(entry => !entry.name.startsWith('coverage_0x')) // remove solidity coverage injected code
 		.map(entry => entry.name + '(' + entry.inputs.map(getSerializedObject).join(',') + ');')
 		.join('')
 }
@@ -36,9 +37,11 @@ contract('ERC1538', async (accounts) => {
 		ERC1538UpdateInstance = await ERC1538Update.new();
 		ERC1538QueryInstance  = await ERC1538Query.new();
 
-		ProxyInterface  = await ERC1538Proxy.new(ERC1538UpdateInstance.address);
-		UpdateInterface = await ERC1538Update.at(ProxyInterface.address);
-		QueryInterface  = await ERC1538Query.at(ProxyInterface.address);
+		ProxyInterface        = await ERC1538Proxy.new(ERC1538UpdateInstance.address);
+		UpdateInterface       = await ERC1538Update.at(ProxyInterface.address);
+		QueryInterface        = await ERC1538Query.at(ProxyInterface.address);
+
+		TestContractInstance  = await TestContract.new();
 
 		for (delegate of [ ERC1538QueryInstance ])
 		{
@@ -151,10 +154,64 @@ contract('ERC1538', async (accounts) => {
 		);
 	});
 
-	it("ERC1538 - fallback", async () => {
-		TestContractInstance  = await TestContract.new();
-		await UpdateInterface.updateContract(TestContractInstance.address, "fallback;", "adding fallback delegate");
-		await expectRevert(web3.eth.sendTransaction({ from: accounts[0], to: TestContractInstance.address, value: 0, gasLimit: 500000 }), "fallback should revert");
+	it("ERC1538 - receive", async () => {
+		tx = await UpdateInterface.updateContract(TestContractInstance.address, "receive;", "adding receive delegate");
+
+		evs = extractEvents(tx, UpdateInterface.address, "FunctionUpdate");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.functionId,        "0x0000000000000000000000000000000000000000000000000000000000000000");
+		assert.equal(evs[0].args.oldDelegate,       "0x0000000000000000000000000000000000000000");
+		assert.equal(evs[0].args.newDelegate,       TestContractInstance.address);
+		assert.equal(evs[0].args.functionSignature, "receive");
+
+		evs = extractEvents(tx, UpdateInterface.address, "CommitMessage");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.message, "adding receive delegate");
+
+		tx = await web3.eth.sendTransaction({ from: accounts[0], to: UpdateInterface.address, value: 0, data: "0x", gasLimit: 500000 });
+		assert.equal(tx.logs[0].topics[0], web3.utils.keccak256("Receive(uint256,bytes)"));
 	});
 
+	it("ERC1538 - fallback", async () => {
+		tx = await UpdateInterface.updateContract(TestContractInstance.address, "fallback;", "adding fallback delegate");
+
+		evs = extractEvents(tx, UpdateInterface.address, "FunctionUpdate");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.functionId,        "0xffffffff00000000000000000000000000000000000000000000000000000000");
+		assert.equal(evs[0].args.oldDelegate,       "0x0000000000000000000000000000000000000000");
+		assert.equal(evs[0].args.newDelegate,       TestContractInstance.address);
+		assert.equal(evs[0].args.functionSignature, "fallback");
+
+		evs = extractEvents(tx, UpdateInterface.address, "CommitMessage");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.message, "adding fallback delegate");
+
+		tx = await web3.eth.sendTransaction({ from: accounts[0], to: UpdateInterface.address, value: 0, data: "0xc0ffee", gasLimit: 500000 });
+		assert.equal(tx.logs[0].topics[0], web3.utils.keccak256("Fallback(uint256,bytes)"));
+	});
+
+	it("ERC1538 - no update", async () => {
+		tx = await UpdateInterface.updateContract(TestContractInstance.address, "fallback;", "no changes");
+
+		evs = extractEvents(tx, UpdateInterface.address, "FunctionUpdate");
+		assert.equal(evs.length, 0);
+
+		evs = extractEvents(tx, UpdateInterface.address, "CommitMessage");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.message, "no changes");
+	});
+
+	it("ERC1538 - remove fallback", async () => {
+		tx = await UpdateInterface.updateContract("0x0000000000000000000000000000000000000000", "fallback;", "no changes");
+
+		evs = extractEvents(tx, UpdateInterface.address, "FunctionUpdate");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.oldDelegate,       TestContractInstance.address);
+		assert.equal(evs[0].args.newDelegate,       "0x0000000000000000000000000000000000000000");
+		assert.equal(evs[0].args.functionSignature, "fallback");
+
+		evs = extractEvents(tx, UpdateInterface.address, "CommitMessage");
+		assert.equal(evs.length, 1);
+		assert.equal(evs[0].args.message, "no changes");
+	});
 });

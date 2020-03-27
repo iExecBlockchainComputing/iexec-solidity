@@ -4,9 +4,9 @@
   "description": "",
   "main": "truffle.js",
   "scripts": {
-    "build": "./node_modules/.bin/truffle compile",
-    "test": "./node_modules/.bin/truffle test",
-    "coverage": "./node_modules/.bin/solidity-coverage"
+    "build": "truffle compile --",
+    "test": "truffle test --",
+    "coverage": "truffle run coverage --"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@ensdomains/ens": "0.4.4",
     "@ensdomains/resolver": "0.2.4",
-    "@openzeppelin/contracts": "^3.0.0-rc.0",
+    "@openzeppelin/contracts": "3.0.0-rc.0",
     "solstruct": "0.0.13",
     "zos-lib": "2.4.3"
   },
@@ -34,6 +34,8 @@
     "@openzeppelin/test-helpers": "0.5.5",
     "chai": "4.2.0",
     "ganache-cli": "6.9.1",
-    "truffle": "5.1.17"
+    "solidity-coverage": "0.7.2",
+    "truffle": "5.1.19",
+    "truffle-security": "^1.7.1"
   }
 }

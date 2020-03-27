@@ -6,15 +6,25 @@ contract TestContract
 	address public caller;
 	bytes   public value;
 
-	fallback() external payable
+	event Receive(uint256 value, bytes data);
+	event Fallback(uint256 value, bytes data);
+
+	receive()
+	external payable
 	{
-		revert("fallback should revert");
+		emit Receive(msg.value, msg.data);
 	}
 
-	function set(bytes calldata _value) external
+	fallback()
+	external payable
+	{
+		emit Fallback(msg.value, msg.data);
+	}
+
+	function set(bytes calldata _value)
+	external
 	{
 		caller = msg.sender;
 		value  = _value;
 	}
-
 }

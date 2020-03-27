@@ -18,8 +18,8 @@
   },
   "files": [
     "/deployment",
-    "/contracts/**/*.sol",
-    "/build/contracts/*.json"
+    "/build",
+    "/contracts"
   ],
   "author": "iExec",
   "license": "ISC",

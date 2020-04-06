@@ -3,19 +3,13 @@ pragma solidity ^0.6.0;
 import "./IERC1538.sol";
 import "./ERC1538Store.sol";
 
-contract ERC1538 is IERC1538, ERC1538Store
+contract ERC1538Core is IERC1538, ERC1538Store
 {
-	bytes4 constant internal RECEIVE  = bytes4(keccak256("receive"));
-	bytes4 constant internal FALLBACK = bytes4(keccak256("fallback"));
+	bytes4 constant internal RECEIVE  = 0xd217fcc6; // bytes4(keccak256("receive"));
+	bytes4 constant internal FALLBACK = 0xb32cdf4d; // bytes4(keccak256("fallback"));
 
 	event CommitMessage(string message);
 	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
-
-	constructor()
-	public
-	{
-		renounceOwnership();
-	}
 
 	function _setFunc(string memory funcSignature, address funcDelegate)
 	internal

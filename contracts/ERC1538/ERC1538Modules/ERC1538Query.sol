@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-import "./ERC1538.sol";
+import "../ERC1538Module.sol";
 
 
 interface ERC1538Query
@@ -15,7 +15,7 @@ interface ERC1538Query
 	function delegateAddresses         (                           ) external view returns(address[] memory);
 }
 
-contract ERC1538QueryDelegate is ERC1538Query, ERC1538
+contract ERC1538QueryDelegate is ERC1538Query, ERC1538Module
 {
 	function totalFunctions()
 	external override view returns(uint256)

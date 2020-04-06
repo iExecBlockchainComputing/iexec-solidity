@@ -1,6 +1,7 @@
 pragma solidity ^0.6.0;
 
-import "./ERC1538.sol";
+import "../ERC1538Core.sol";
+import "../ERC1538Module.sol";
 
 
 interface ERC1538Update
@@ -8,7 +9,7 @@ interface ERC1538Update
 	function updateContract(address _delegate, string calldata _functionSignatures, string calldata commitMessage) external;
 }
 
-contract ERC1538UpdateDelegate is ERC1538Update, ERC1538
+contract ERC1538UpdateDelegate is ERC1538Update, ERC1538Core, ERC1538Module
 {
 	function updateContract(
 		address         _delegate,

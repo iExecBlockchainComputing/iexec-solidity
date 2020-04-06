@@ -202,7 +202,7 @@ contract('ERC1538', async (accounts) => {
 	});
 
 	it("ERC1538 - remove fallback", async () => {
-		tx = await UpdateInterface.updateContract("0x0000000000000000000000000000000000000000", "fallback;", "no changes");
+		tx = await UpdateInterface.updateContract("0x0000000000000000000000000000000000000000", "fallback;", "removing");
 
 		evs = extractEvents(tx, UpdateInterface.address, "FunctionUpdate");
 		assert.equal(evs.length, 1);
@@ -212,6 +212,6 @@ contract('ERC1538', async (accounts) => {
 
 		evs = extractEvents(tx, UpdateInterface.address, "CommitMessage");
 		assert.equal(evs.length, 1);
-		assert.equal(evs[0].args.message, "no changes");
+		assert.equal(evs[0].args.message, "removing");
 	});
 });

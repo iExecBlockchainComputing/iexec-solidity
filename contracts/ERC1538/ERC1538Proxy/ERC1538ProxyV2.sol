@@ -1,14 +1,11 @@
 pragma solidity ^0.6.0;
 
-import "../Upgradeability/Proxy.sol";
-import "./ERC1538.sol";
+import "../../Upgradeability/Proxy.sol";
+import "../ERC1538Core.sol";
 
 
-contract ERC1538ProxyV2 is ERC1538, Proxy
+contract ERC1538ProxyV2 is ERC1538Core, Proxy
 {
-	event CommitMessage(string message);
-	event FunctionUpdate(bytes4 indexed functionId, address indexed oldDelegate, address indexed newDelegate, string functionSignature);
-
 	constructor(address _erc1538Delegate)
 	public
 	{
@@ -20,7 +17,14 @@ contract ERC1538ProxyV2 is ERC1538, Proxy
 	function _implementation() internal override view returns (address)
 	{
 		address delegateFunc = m_funcs.value1(msg.sig);
-		address fallbackFunc = m_funcs.value1(0xFFFFFFFF);
-		return delegateFunc != address(0) ? delegateFunc : fallbackFunc;
+
+		if (delegateFunc != address(0))
+		{
+			return delegateFunc;
+		}
+		else
+		{
+			return m_funcs.value1(0xFFFFFFFF);
+		}
 	}
 }

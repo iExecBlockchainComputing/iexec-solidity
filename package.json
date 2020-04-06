@@ -1,12 +1,12 @@
 {
   "name": "@iexec/solidity",
-  "version": "0.1.0-beta.9",
+  "version": "0.1.0-beta.10",
   "description": "",
   "main": "truffle.js",
   "scripts": {
     "build": "truffle compile --",
     "test": "truffle test --",
-		"autotest": "./autotest.sh --",
+    "autotest": "./autotest.sh --",
     "coverage": "truffle run coverage --"
   },
   "repository": {
@@ -28,15 +28,15 @@
     "@ensdomains/ens": "0.4.4",
     "@ensdomains/resolver": "0.2.4",
     "@openzeppelin/contracts": "3.0.0-rc.0",
-    "solstruct": "0.0.13",
-    "zos-lib": "2.4.3"
+    "@openzeppelin/upgrades": "2.8.0",
+    "solstruct": "0.0.13"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "0.5.5",
     "chai": "4.2.0",
     "ganache-cli": "6.9.1",
     "solidity-coverage": "0.7.2",
-    "truffle": "5.1.19",
+    "truffle": "5.1.20",
     "truffle-security": "^1.7.1"
   }
 }

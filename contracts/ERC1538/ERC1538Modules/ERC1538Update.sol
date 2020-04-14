@@ -45,7 +45,7 @@ contract ERC1538UpdateDelegate is ERC1538Update, ERC1538Core, ERC1538Module
 				_setFunc(string(signatures), _delegate);
 
 				assembly { signatures := add(signatures, add(length, 1)) }
-				start = ++pos;
+				start = pos+1;
 			}
 		}
 		emit CommitMessage(_commitMessage);

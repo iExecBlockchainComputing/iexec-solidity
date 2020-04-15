@@ -1,13 +1,13 @@
 {
   "name": "@iexec/solidity",
-  "version": "0.1.0-beta.11",
+  "version": "0.1.0-beta.12",
   "description": "",
   "main": "truffle.js",
   "scripts": {
-    "build": "truffle compile --",
-    "test": "truffle test --",
-    "autotest": "./autotest.sh --",
-    "coverage": "truffle run coverage --"
+    "build": "truffle compile",
+    "test": "truffle test",
+    "autotest": "./autotest.sh",
+    "coverage": "truffle run coverage"
   },
   "repository": {
     "type": "git",

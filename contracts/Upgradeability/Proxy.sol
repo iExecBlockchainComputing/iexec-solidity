@@ -12,7 +12,7 @@ abstract contract Proxy {
    * @dev Receive function.
    * Implemented entirely in `_fallback`.
    */
-  receive() external payable virtual {
+  receive() external payable {
     _fallback();
   }
 

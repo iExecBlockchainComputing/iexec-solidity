@@ -22,7 +22,7 @@
     "/contracts"
   ],
   "author": "iExec",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "dependencies": {
     "@openzeppelin/contracts": "3.0.0-rc.0",

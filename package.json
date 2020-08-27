@@ -1,6 +1,6 @@
 {
   "name": "@iexec/solidity",
-  "version": "0.1.0-beta.16",
+  "version": "0.1.0",
   "description": "",
   "main": "truffle.js",
   "scripts": {
@@ -22,18 +22,17 @@
     "/contracts"
   ],
   "author": "iExec",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "dependencies": {
     "@openzeppelin/contracts": "3.0.0-rc.0",
     "solstruct": "0.0.13"
   },
   "devDependencies": {
-    "@openzeppelin/test-helpers": "0.5.5",
+    "@openzeppelin/test-helpers": "0.5.6",
     "chai": "4.2.0",
     "ganache-cli": "6.9.1",
-    "solidity-coverage": "0.7.2",
-    "truffle": "5.1.20",
-    "truffle-security": "^1.7.1"
+    "solidity-coverage": "0.7.5",
+    "truffle": "5.1.28"
   }
 }

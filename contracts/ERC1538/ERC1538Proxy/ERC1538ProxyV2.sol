@@ -27,7 +27,6 @@ contract ERC1538ProxyV2 is ERC1538Core, Proxy
 	constructor(address _erc1538Delegate)
 	public
 	{
-		_transferOwnership(msg.sender);
 		_setFunc("updateContract(address,string[],string)", _erc1538Delegate);
 		emit CommitMessage("Added ERC1538 updateContract function at contract creation");
 	}

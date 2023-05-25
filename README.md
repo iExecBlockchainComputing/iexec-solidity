@@ -10,7 +10,7 @@
 
 3. **Raise a PR to commit the Version Change**
 
-4. **Tag the Release on GitHub**
+4. **Tag the Release on GitHub using the same version in `package.json`**
 
 5. **Publish a new release on GitHub**
 

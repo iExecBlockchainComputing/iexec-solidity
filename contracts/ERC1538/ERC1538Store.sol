@@ -18,7 +18,7 @@
 
 pragma solidity ^0.6.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-v3/access/Ownable.sol";
 import "solstruct/contracts/libs/LibMap2.bytes4.address.bytes.sol";
 
 contract ERC1538Store is Ownable

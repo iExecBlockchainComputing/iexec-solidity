@@ -18,7 +18,7 @@
 
 pragma solidity ^0.6.0;
 
-import '@openzeppelin/contracts/utils/Address.sol';
+import '@openzeppelin/contracts-v3/utils/Address.sol';
 import './Proxy.sol';
 
 /**

@@ -25,7 +25,7 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-solidity.git#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "3.2.0",
+    "@openzeppelin/contracts-v3": "npm:@openzeppelin/contracts@^3.2.0",
     "solstruct": "0.1.0"
   },
   "devDependencies": {
